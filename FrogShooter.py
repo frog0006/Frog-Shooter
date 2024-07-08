@@ -17,11 +17,12 @@ def move_down():
     player.sety(y)
 
 def fire_bullet():
-    x = player.xcor()
-    y = player.ycor()
-    bullet.setposition(x + 30, y)
-    bullet.showturtle()
-    bullet.state = "fired"
+    if bullet.state == "ready":
+        x = player.xcor()
+        y = player.ycor()
+        bullet.setposition(x + 30, y)  # Adjust position to be slightly in front of player
+        bullet.showturtle()
+        bullet.state = "fired"
 
 def move_bullet():
     if bullet.state == "fired":
@@ -75,8 +76,8 @@ bullet_speed = 10
 
 # Main loop
 while True:
-    wn.update()
     move_bullet()
+    wn.update()
 
 # Keep the window open
 wn.mainloop()
