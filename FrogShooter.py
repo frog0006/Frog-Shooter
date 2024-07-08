@@ -3,7 +3,7 @@ import time
 import random
 import winsound
 
-#Define functions
+# Define functions
 def move_up():
     y = player.ycor() + 15
     if y > 220:
@@ -19,8 +19,19 @@ def move_down():
 def fire_bullet():
     x = player.xcor()
     y = player.ycor()
-    bullet.setposition(x+50,y)
+    bullet.setposition(x + 30, y)
     bullet.showturtle()
+    bullet.state = "fired"
+
+def move_bullet():
+    if bullet.state == "fired":
+        x = bullet.xcor() + bullet_speed
+        bullet.setx(x)
+
+        # Check if the bullet has gone off the screen
+        if bullet.xcor() > 300:
+            bullet.hideturtle()
+            bullet.state = "ready"
 
 # Set up the screen
 wn = turtle.Screen()
@@ -31,11 +42,11 @@ wn.title("Frog Shooter")
 wn.addshape('images/lake.gif')
 wn.bgpic('images/lake.gif')
 
-#Register player and target
+# Register player and target
 turtle.register_shape('images/frogcloud_img.gif')
 turtle.register_shape('images/watergun_img.gif')
 
-#Create the player turtle
+# Create the player turtle
 player = turtle.Turtle()
 player.shape('images/watergun_img.gif')
 player.up()
@@ -43,26 +54,29 @@ player.speed(0)
 player.setposition(-270, 0)
 player.setheading(90)
 
-#Create the player's watergun bullet
+# Create the player's watergun bullet
 bullet = turtle.Turtle()
 bullet.color('blue')
 bullet.shape('triangle')
 bullet.up()
 bullet.speed(0)
-bullet.setheading(90)
+bullet.setheading(0)  # Set bullet heading to 0 (right direction)
 bullet.shapesize(0.5, 0.5)
 bullet.hideturtle()
+bullet.state = "ready"
 
-#Create keybinds
+# Create keybinds
 turtle.listen()
 turtle.onkey(move_up, 'Up')
 turtle.onkey(move_down, 'Down')
 turtle.onkey(fire_bullet, 'space')
 
 bullet_speed = 10
-while True:
-    bullet.fd(bullet_speed)
-
 
 # Main loop
+while True:
+    wn.update()
+    move_bullet()
+
+# Keep the window open
 wn.mainloop()
