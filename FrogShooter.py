@@ -17,22 +17,28 @@ def move_down():
     player.sety(y)
 
 def fire_bullet():
-    if bullet.state == "ready":
-        x = player.xcor()
-        y = player.ycor()
-        bullet.setposition(x + 30, y)  # Adjust position to be slightly in front of player
-        bullet.showturtle()
-        bullet.state = "fired"
+    # Create a new bullet
+    bullet = turtle.Turtle()
+    bullet.color('blue')
+    bullet.shape('triangle')
+    bullet.up()
+    bullet.speed(0)
+    bullet.setheading(0)  # Set bullet heading to 0 (right direction)
+    bullet.shapesize(0.5, 0.5)
+    x = player.xcor()
+    y = player.ycor()
+    bullet.setposition(x + 20, y)  # Adjust position to be slightly in front of player
+    bullets.append(bullet)
 
-def move_bullet():
-    if bullet.state == "fired":
+def move_bullets():
+    for bullet in bullets:
         x = bullet.xcor() + bullet_speed
         bullet.setx(x)
 
         # Check if the bullet has gone off the screen
         if bullet.xcor() > 300:
             bullet.hideturtle()
-            bullet.state = "ready"
+            bullets.remove(bullet)
 
 # Set up the screen
 wn = turtle.Screen()
@@ -55,16 +61,8 @@ player.speed(0)
 player.setposition(-270, 0)
 player.setheading(90)
 
-# Create the player's watergun bullet
-bullet = turtle.Turtle()
-bullet.color('blue')
-bullet.shape('triangle')
-bullet.up()
-bullet.speed(0)
-bullet.setheading(0)  # Set bullet heading to 0 (right direction)
-bullet.shapesize(0.5, 0.5)
-bullet.hideturtle()
-bullet.state = "ready"
+# Create a list to store bullets
+bullets = []
 
 # Create keybinds
 turtle.listen()
@@ -76,7 +74,7 @@ bullet_speed = 10
 
 # Main loop
 while True:
-    move_bullet()
+    move_bullets()
     wn.update()
 
 # Keep the window open
