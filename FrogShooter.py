@@ -19,22 +19,23 @@ def move_down():
     player.sety(y)
 
 def fire_bullet():
-    winsound.PlaySound('audios/laser_sfx.wav',winsound.SND_ASYNC)
+    winsound.PlaySound('audios/laser_sfx.wav', winsound.SND_ASYNC)
     x = player.xcor()
     y = player.ycor()
-    bullet.setposition(x,y+30)
+    bullet.setposition(x + 40, y)
+    bullet.setheading(0)  # Set bullet heading to right
     bullet.showturtle()
 
-# set up window
+# Set up window
 wn = turtle.Screen()
-wn.setup(width = 625,height = 500)
+wn.setup(width=625, height=500)
 wn.title("Frog Shooter")
 
 # Register and set background image
 wn.addshape('images/lake.gif')
 wn.bgpic('images/lake.gif')
 
-# register shapes
+# Register shapes
 turtle.register_shape('images/frogcloud_img.gif')
 turtle.register_shape('images/watergun_img.gif')
 
@@ -47,7 +48,7 @@ score_pen = turtle.Turtle()
 score_pen.speed(0)
 score_pen.color('black')
 score_pen.up()
-score_pen.setposition(-200,210)
+score_pen.setposition(-200, 210)
 score_pen.write('Score: %s' % score)
 score_pen.hideturtle()
 
@@ -56,7 +57,7 @@ player = turtle.Turtle()
 player.shape('images/watergun_img.gif')
 player.up()
 player.speed(0)
-player.setposition(-220,0)
+player.setposition(-220, 0)
 player.setheading(90)
 
 # Create player's bullet​
@@ -65,55 +66,54 @@ bullet.color('yellow')
 bullet.shape('triangle')
 bullet.up()
 bullet.speed(0)
-bullet.setheading(90)
-bullet.shapesize(0.5,0.5)
+bullet.setheading(0)  # Initial bullet heading to right
+bullet.shapesize(0.5, 0.5)
 bullet.hideturtle()
 
-# create frog turtle
+# Create frog turtle
 frog = turtle.Turtle()
 frog.shape('images/frogcloud_img.gif')
 frog.up()
 frog.speed(0)
-frog.setposition(-180,180)
+frog.setposition(-180, 180)
 
 # Create keyboard binding
 turtle.listen()
-turtle.onkey(move_up,'Up')
-turtle.onkey(move_down,'Down')
-turtle.onkey(fire_bullet,'space')
+turtle.onkey(move_up, 'Up')
+turtle.onkey(move_down, 'Down')
+turtle.onkey(fire_bullet, 'space')
 
 frog_speed = 2
 bullet_speed = 10
+
 while True:
     frog.fd(frog_speed)
 
-    # check border 
+    # Check border
     if frog.xcor() > 190 or frog.xcor() < -190:
         frog.right(180)
-        frog.fd(frog_speed)        
+        frog.fd(frog_speed)
 
-    # fire the bullet
+    # Fire the bullet
     bullet.fd(bullet_speed)
 
-    # check for collision
-    if abs(bullet.xcor() - frog.xcor()) < 15 and \
-       abs(bullet.ycor() - frog.ycor()) < 15:
+    # Check for collision
+    if abs(bullet.xcor() - frog.xcor()) < 15 and abs(bullet.ycor() - frog.ycor()) < 15:
+        # Sound
+        winsound.PlaySound('audios/explosion_sfx.wav', winsound.SND_ASYNC)
 
-       # Sound
-        winsound.PlaySound('audios/explosion_sfx.wav',winsound.SND_ASYNC)
-        
-       # update the score
-        score = score + 1
+        # Update the score
+        score += 1
         score_pen.clear()
         score_pen.write('Score: %s' % score)
-       
-       # reset frog and player
+
+        # Reset frog and player
         bullet.hideturtle()
         frog.hideturtle()
         time.sleep(2)
 
         frog.showturtle()
-        x = random.randint(-180,180)
-        frog.setposition(x,180)
-            
-        player.setposition(-220,0)
+        x = random.randint(-180, 180)
+        frog.setposition(x, 180)
+
+        player.setposition(-220, 0)
