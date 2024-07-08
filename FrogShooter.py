@@ -19,12 +19,13 @@ def move_down():
     player.sety(y)
 
 def fire_bullet():
-    winsound.PlaySound('audios/laser_sfx.wav', winsound.SND_ASYNC)
-    x = player.xcor()
-    y = player.ycor()
-    bullet.setposition(x + 40, y)
-    bullet.setheading(0)  # Set bullet heading to right
-    bullet.showturtle()
+    if not bullet.isvisible():
+        winsound.PlaySound('audios/laser_sfx.wav', winsound.SND_ASYNC)
+        x = player.xcor()
+        y = player.ycor()
+        bullet.setposition(x + 40, y)
+        bullet.setheading(0)  # Set bullet heading to right
+        bullet.showturtle()
 
 # Set up window
 wn = turtle.Screen()
@@ -75,7 +76,7 @@ frog = turtle.Turtle()
 frog.shape('images/frogcloud_img.gif')
 frog.up()
 frog.speed(0)
-frog.setposition(-180, 180)
+frog.setposition(200, 0)
 
 # Create keyboard binding
 turtle.listen()
@@ -87,15 +88,15 @@ frog_speed = 2
 bullet_speed = 10
 
 while True:
-    frog.fd(frog_speed)
+    frog.sety(frog.ycor() + frog_speed)
 
     # Check border
-    if frog.xcor() > 190 or frog.xcor() < -190:
-        frog.right(180)
-        frog.fd(frog_speed)
+    if frog.ycor() > 220 or frog.ycor() < -220:
+        frog_speed *= -1  # Change direction
 
-    # Fire the bullet
-    bullet.fd(bullet_speed)
+    # Move the bullet
+    if bullet.isvisible():
+        bullet.fd(bullet_speed)
 
     # Check for collision
     if abs(bullet.xcor() - frog.xcor()) < 15 and abs(bullet.ycor() - frog.ycor()) < 15:
@@ -113,7 +114,6 @@ while True:
         time.sleep(2)
 
         frog.showturtle()
-        x = random.randint(-180, 180)
-        frog.setposition(x, 180)
+        frog.setposition(200, random.randint(-180, 180))
 
         player.setposition(-220, 0)
