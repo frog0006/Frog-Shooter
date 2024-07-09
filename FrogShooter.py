@@ -108,7 +108,7 @@ def game_loop():
             bullet_state = "ready"
 
         # Check for collision using the distance method
-        if bullet.distance(frog) < 15:
+        if bullet.distance(frog) < 30:  # Adjusted collision distance
             # Sound
             winsound.PlaySound('audios/explosion_sfx.wav', winsound.SND_ASYNC)
 
