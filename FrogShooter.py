@@ -5,18 +5,24 @@ import winsound
 # Functions
 player_dx = 15
 bullet_state = "ready"  # Initialize bullet state
+up_pressed = False
+down_pressed = False
 
 def move_up():
-    y = player.ycor() + 15
-    if y > 220:
-        y = 220
-    player.sety(y)
+    global up_pressed
+    up_pressed = True
+
+def move_up_release():
+    global up_pressed
+    up_pressed = False
 
 def move_down():
-    y = player.ycor() - 15
-    if y < -220:
-        y = -220
-    player.sety(y)
+    global down_pressed
+    down_pressed = True
+
+def move_down_release():
+    global down_pressed
+    down_pressed = False
 
 def fire_bullet():
     global bullet_state
@@ -82,8 +88,10 @@ frog.setposition(200, 0)
 
 # Create keyboard binding
 turtle.listen()
-turtle.onkey(move_up, 'Up')
-turtle.onkey(move_down, 'Down')
+turtle.onkeypress(move_up, 'Up')
+turtle.onkeyrelease(move_up_release, 'Up')
+turtle.onkeypress(move_down, 'Down')
+turtle.onkeyrelease(move_down_release, 'Down')
 turtle.onkey(fire_bullet, 'space')
 
 frog_speed = 2
@@ -97,6 +105,12 @@ def game_loop():
     # Check border
     if frog.ycor() > 220 or frog.ycor() < -220:
         frog_speed *= -1  # Change direction
+
+    # Move the player
+    if up_pressed:
+        move_up_continuous()
+    if down_pressed:
+        move_down_continuous()
 
     # Move the bullet
     if bullet_state == "fired":
@@ -127,6 +141,18 @@ def game_loop():
 
     # Repeat the game loop
     wn.ontimer(game_loop, 10)
+
+def move_up_continuous():
+    y = player.ycor() + 15
+    if y > 220:
+        y = 220
+    player.sety(y)
+
+def move_down_continuous():
+    y = player.ycor() - 15
+    if y < -220:
+        y = -220
+    player.sety(y)
 
 # Start the game loop
 game_loop()
