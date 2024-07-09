@@ -7,6 +7,7 @@ bullet_state = "ready"  # Initialize bullet state
 up_pressed = False
 down_pressed = False
 frog_speed = 2  # Initialize frog_speed globally
+frog_frozen = False  # Flag to track if frog is currently frozen
 
 def move_up():
     global up_pressed
@@ -114,9 +115,9 @@ def move_down_continuous():
     player.sety(y)
 
 def move_frog():
-    global frog_speed
+    global frog_speed, frog_frozen
 
-    if frog.isvisible():
+    if not frog_frozen:
         frog.sety(frog.ycor() + frog_speed)
 
         # Check border
@@ -132,25 +133,28 @@ def move_frog():
     wn.ontimer(move_frog, int(random_adjustment_delay * 1000))
 
 def freeze_frog():
-    global frog_speed
+    global frog_frozen, frog_speed
 
-    # Freeze the frog for a random duration between 1-3 seconds
-    freeze_duration = random.uniform(1, 3)
-    frog_speed = 0
+    if not frog_frozen:
+        # Freeze the frog for a random duration between 1-5 seconds
+        freeze_duration = random.uniform(1, 5)
+        frog_frozen = True
+        frog_speed = 0
 
-    # Schedule unfreeze after freeze_duration seconds
-    wn.ontimer(unfreeze_frog, int(freeze_duration * 1000))
-
-def unfreeze_frog():
-    global frog_speed
-
-    # Generate a new random speed between 1 and 5 for the frog
-    new_speed = random.randint(1, 5)
-    frog_speed = new_speed
+        # Schedule unfreeze after freeze_duration seconds
+        wn.ontimer(unfreeze_frog, int(freeze_duration * 1000))
 
     # Schedule the next freeze period after a random delay between 5-20 seconds
     next_freeze_delay = random.uniform(5, 20)
     wn.ontimer(freeze_frog, int(next_freeze_delay * 1000))
+
+def unfreeze_frog():
+    global frog_frozen, frog_speed
+
+    # Unfreeze the frog and generate a new random speed between 1 and 5
+    frog_frozen = False
+    new_speed = random.randint(1, 5)
+    frog_speed = new_speed
 
 def game_loop():
     global bullet_state, score
@@ -172,7 +176,7 @@ def game_loop():
 
         # Check for collision using the distance method with adjusted hitbox offset
         # Extend hitbox slightly lower than frog's position
-        if bullet.distance(frog.xcor(), frog.ycor() - 10) < 30:  # Adjusted collision distance
+        if frog.isvisible() and bullet.distance(frog.xcor(), frog.ycor() - 10) < 30:  # Adjusted collision distance
             # Sound
             winsound.PlaySound('audios/explosion_sfx.wav', winsound.SND_ASYNC)
 
@@ -195,7 +199,7 @@ def game_loop():
 # Start the movement loop
 move_frog()
 
-# Start the freeze period after a random delay between 5-20 seconds
+# Start the first freeze period after a random delay between 5-20 seconds
 next_freeze_delay = random.uniform(5, 20)
 wn.ontimer(freeze_frog, int(next_freeze_delay * 1000))
 
