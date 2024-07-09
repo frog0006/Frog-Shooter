@@ -97,6 +97,9 @@ turtle.onkey(fire_bullet, 'space')
 frog_speed = 2
 bullet_speed = 10
 
+# Hitbox offset
+frog_hitbox_offset = 10
+
 def game_loop():
     global bullet_state, score, frog_speed, bullet_speed
 
@@ -121,8 +124,8 @@ def game_loop():
             bullet.hideturtle()
             bullet_state = "ready"
 
-        # Check for collision using the distance method
-        if bullet.distance(frog) < 30:  # Adjusted collision distance
+        # Check for collision using the distance method with hitbox offset
+        if bullet.distance(frog.xcor(), frog.ycor() - frog_hitbox_offset) < 30:  # Adjusted collision distance
             # Sound
             winsound.PlaySound('audios/explosion_sfx.wav', winsound.SND_ASYNC)
 
