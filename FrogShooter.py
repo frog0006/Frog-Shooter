@@ -103,6 +103,7 @@ frog_hitbox_offset = 10
 def game_loop():
     global bullet_state, score, frog_speed, bullet_speed
 
+    # Move the frog based on its speed
     frog.sety(frog.ycor() + frog_speed)
 
     # Check border
