@@ -71,12 +71,12 @@ player.setheading(90)
 
 # Create player's bullet
 bullet = turtle.Turtle()
-bullet.color('yellow')
+bullet.color('blue')
 bullet.shape('triangle')
+bullet.shapesize(stretch_wid=0.2, stretch_len=1.5)
 bullet.up()
 bullet.speed(0)
 bullet.setheading(0)  # Initial bullet heading to right
-bullet.shapesize(0.5, 0.5)
 bullet.hideturtle()
 
 # Create frog turtle
