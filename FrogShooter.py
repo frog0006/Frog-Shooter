@@ -93,7 +93,6 @@ turtle.onkeypress(move_down, 'Down')
 turtle.onkeyrelease(move_down_release, 'Down')
 turtle.onkey(fire_bullet, 'space')
 
-frog_speed = 2
 bullet_speed = 20  # Increased bullet speed
 
 # Hitbox offset
@@ -123,13 +122,26 @@ def move_frog():
     # Repeat the movement function
     wn.ontimer(move_frog, 10)
 
-def change_frog_speed():
+def freeze_frog():
     global frog_speed
-    # Generate a random speed between 1 and 5
+
+    # Freeze the frog for a random duration between 1-3 seconds
+    freeze_duration = random.uniform(1, 3)
+    frog_speed = 0
+
+    # Schedule unfreeze after freeze_duration seconds
+    wn.ontimer(unfreeze_frog, int(freeze_duration * 1000))
+
+def unfreeze_frog():
+    global frog_speed
+
+    # Generate a new random speed between 1 and 5 for the frog
     new_speed = random.randint(1, 5)
     frog_speed = new_speed
-    # Schedule the next speed change in 5 seconds
-    wn.ontimer(change_frog_speed, 5000)
+
+    # Schedule the next freeze period after a random delay between 5-20 seconds
+    next_freeze_delay = random.uniform(5, 20)
+    wn.ontimer(freeze_frog, int(next_freeze_delay * 1000))
 
 def game_loop():
     global bullet_state, score
@@ -174,8 +186,9 @@ def game_loop():
 # Start the movement loop
 move_frog()
 
-# Start changing frog's speed every 5 seconds
-change_frog_speed()
+# Start the freeze period after a random delay between 5-20 seconds
+next_freeze_delay = random.uniform(5, 20)
+wn.ontimer(freeze_frog, int(next_freeze_delay * 1000))
 
 # Start the game loop
 game_loop()
