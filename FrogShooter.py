@@ -64,7 +64,7 @@ player.speed(0)
 player.setposition(-220, 0)
 player.setheading(90)
 
-# Create player's bullet​
+# Create player's bullet
 bullet = turtle.Turtle()
 bullet.color('yellow')
 bullet.shape('triangle')
@@ -102,12 +102,12 @@ while True:
         bullet.fd(bullet_speed)
 
     # Check if the bullet goes off screen
-        if bullet.xcor() > 300:
-            bullet.hideturtle()
-            bullet_state = "ready"
+    if bullet.xcor() > 300:
+        bullet.hideturtle()
+        bullet_state = "ready"
 
-    # Check for collision
-    if bullet_state == "fired" and abs(bullet.xcor() - frog.xcor()) < 15 and abs(bullet.ycor() - frog.ycor()) < 15:
+    # Check for collision using the distance method
+    if bullet_state == "fired" and bullet.distance(frog) < 15:
         # Sound
         winsound.PlaySound('audios/explosion_sfx.wav', winsound.SND_ASYNC)
 
@@ -126,3 +126,5 @@ while True:
         frog.setposition(200, random.randint(-180, 180))
 
         player.setposition(-220, 0)
+
+turtle.done()
