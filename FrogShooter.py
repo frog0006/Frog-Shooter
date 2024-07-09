@@ -95,7 +95,7 @@ turtle.onkeyrelease(move_down_release, 'Down')
 turtle.onkey(fire_bullet, 'space')
 
 frog_speed = 2
-bullet_speed = 10
+bullet_speed = 20  # Increased bullet speed
 
 # Hitbox offset
 frog_hitbox_offset = 10
