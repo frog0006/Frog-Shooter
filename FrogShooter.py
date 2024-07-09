@@ -2,7 +2,7 @@ import turtle
 import random
 import winsound
 
-# Functions
+# Global Variables
 player_dx = 15
 bullet_state = "ready"  # Initialize bullet state
 up_pressed = False
