@@ -116,7 +116,7 @@ def move_down_continuous():
 def move_frog():
     global frog_speed
 
-    if not frog.is_hidden():
+    if frog.isvisible():
         frog.sety(frog.ycor() + frog_speed)
 
         # Check border
