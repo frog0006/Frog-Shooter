@@ -3,7 +3,6 @@ import random
 import winsound
 
 # Global Variables
-player_dx = 15
 bullet_state = "ready"  # Initialize bullet state
 up_pressed = False
 down_pressed = False
@@ -98,16 +97,16 @@ frog_speed = 2
 bullet_speed = 20  # Increased bullet speed
 
 # Hitbox offset
-frog_hitbox_offset = 10
+frog_hitbox_offset = 20  # Adjusted to match the frog's body size
 
 def move_up_continuous():
-    y = player.ycor() + 15
+    y = player.ycor() + 5  # Adjusted movement speed
     if y > 220:
         y = 220
     player.sety(y)
 
 def move_down_continuous():
-    y = player.ycor() - 15
+    y = player.ycor() - 5  # Adjusted movement speed
     if y < -220:
         y = -220
     player.sety(y)
@@ -142,8 +141,9 @@ def game_loop():
             bullet.hideturtle()
             bullet_state = "ready"
 
-        # Check for collision using the distance method with hitbox offset
-        if bullet.distance(frog.xcor(), frog.ycor() - frog_hitbox_offset) < 30:  # Adjusted collision distance
+        # Check for collision using the distance method with adjusted hitbox offset
+        # Only consider collisions with the frog's body, not its head
+        if bullet.distance(frog.xcor(), frog.ycor()) < 20:  # Adjusted collision distance
             # Sound
             winsound.PlaySound('audios/explosion_sfx.wav', winsound.SND_ASYNC)
 
