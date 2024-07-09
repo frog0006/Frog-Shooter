@@ -100,15 +100,32 @@ bullet_speed = 20  # Increased bullet speed
 # Hitbox offset
 frog_hitbox_offset = 10
 
-def game_loop():
-    global bullet_state, score, frog_speed, bullet_speed
+def move_up_continuous():
+    y = player.ycor() + 15
+    if y > 220:
+        y = 220
+    player.sety(y)
 
-    # Move the frog based on its speed
+def move_down_continuous():
+    y = player.ycor() - 15
+    if y < -220:
+        y = -220
+    player.sety(y)
+
+def move_frog():
+    global frog_speed
+
     frog.sety(frog.ycor() + frog_speed)
 
     # Check border
     if frog.ycor() > 220 or frog.ycor() < -220:
         frog_speed *= -1  # Change direction
+
+    # Repeat the movement function
+    wn.ontimer(move_frog, 10)
+
+def game_loop():
+    global bullet_state, score
 
     # Move the player
     if up_pressed:
@@ -146,17 +163,8 @@ def game_loop():
     # Repeat the game loop
     wn.ontimer(game_loop, 10)
 
-def move_up_continuous():
-    y = player.ycor() + 15
-    if y > 220:
-        y = 220
-    player.sety(y)
-
-def move_down_continuous():
-    y = player.ycor() - 15
-    if y < -220:
-        y = -220
-    player.sety(y)
+# Start the movement loop
+move_frog()
 
 # Start the game loop
 game_loop()
