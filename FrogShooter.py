@@ -90,7 +90,9 @@ turtle.onkey(fire_bullet, 'space')
 frog_speed = 2
 bullet_speed = 10
 
-while True:
+def game_loop():
+    global bullet_state, score
+
     frog.sety(frog.ycor() + frog_speed)
 
     # Check border
@@ -101,30 +103,36 @@ while True:
     if bullet_state == "fired":
         bullet.fd(bullet_speed)
 
-    # Check if the bullet goes off screen
-    if bullet.xcor() > 300:
-        bullet.hideturtle()
-        bullet_state = "ready"
+        # Check if the bullet goes off screen
+        if bullet.xcor() > 300:
+            bullet.hideturtle()
+            bullet_state = "ready"
 
-    # Check for collision using the distance method
-    if bullet_state == "fired" and bullet.distance(frog) < 15:
-        # Sound
-        winsound.PlaySound('audios/explosion_sfx.wav', winsound.SND_ASYNC)
+        # Check for collision using the distance method
+        if bullet.distance(frog) < 15:
+            # Sound
+            winsound.PlaySound('audios/explosion_sfx.wav', winsound.SND_ASYNC)
 
-        # Update the score
-        score += 1
-        score_pen.clear()
-        score_pen.write('Score: %s' % score)
+            # Update the score
+            score += 1
+            score_pen.clear()
+            score_pen.write('Score: %s' % score)
 
-        # Reset frog and bullet
-        bullet.hideturtle()
-        bullet_state = "ready"
-        frog.hideturtle()
-        time.sleep(2)
+            # Reset frog and bullet
+            bullet.hideturtle()
+            bullet_state = "ready"
+            frog.hideturtle()
+            time.sleep(1)
 
-        frog.showturtle()
-        frog.setposition(200, random.randint(-180, 180))
+            frog.showturtle()
+            frog.setposition(200, random.randint(-180, 180))
 
-        player.setposition(-220, 0)
+            player.setposition(-220, 0)
+
+    # Repeat the game loop
+    wn.ontimer(game_loop, 20)
+
+# Start the game loop
+game_loop()
 
 turtle.done()
