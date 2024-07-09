@@ -6,6 +6,7 @@ import winsound
 bullet_state = "ready"  # Initialize bullet state
 up_pressed = False
 down_pressed = False
+frog_speed = 2  # Initialize frog_speed globally
 
 def move_up():
     global up_pressed
@@ -99,12 +100,14 @@ bullet_speed = 20  # Increased bullet speed
 frog_hitbox_offset = 25  # Adjusted to extend slightly lower than the frog's position
 
 def move_up_continuous():
+    global frog_speed  # Declare frog_speed as global
     y = player.ycor() + 5  # Adjusted movement speed
     if y > 220:
         y = 220
     player.sety(y)
 
 def move_down_continuous():
+    global frog_speed  # Declare frog_speed as global
     y = player.ycor() - 5  # Adjusted movement speed
     if y < -220:
         y = -220
