@@ -152,7 +152,7 @@ def unfreeze_frog():
 
     # Unfreeze the frog and generate a new random speed between 1 and 5
     frog_frozen = False
-    new_speed = random.randint(1, 5)
+    new_speed = random.randint(2, 8)
     frog_speed = new_speed
 
 def game_loop():
