@@ -1,5 +1,4 @@
 import turtle
-import time
 import random
 import winsound
 
@@ -53,8 +52,8 @@ score_pen.speed(0)
 score_pen.color('black')
 score_pen.up()
 score_pen.setposition(-200, 210)
-score_pen.write('Score: %s' % score)
 score_pen.hideturtle()
+score_pen.write('Score: %s' % score, align='left', font=('Arial', 14, 'normal'))
 
 # Create the player turtle
 player = turtle.Turtle()
@@ -116,21 +115,18 @@ def game_loop():
             # Update the score
             score += 1
             score_pen.clear()
-            score_pen.write('Score: %s' % score)
+            score_pen.write('Score: %s' % score, align='left', font=('Arial', 14, 'normal'))
 
             # Reset frog and bullet
             bullet.hideturtle()
             bullet_state = "ready"
             frog.hideturtle()
-            time.sleep(1)
 
-            frog.showturtle()
             frog.setposition(200, random.randint(-180, 180))
-
-            player.setposition(-220, 0)
+            frog.showturtle()
 
     # Repeat the game loop
-    wn.ontimer(game_loop, 20)
+    wn.ontimer(game_loop, 10)
 
 # Start the game loop
 game_loop()
