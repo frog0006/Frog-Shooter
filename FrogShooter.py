@@ -168,7 +168,7 @@ def game_loop():
         # Extend hitbox slightly lower than frog's position
         if bullet.distance(frog.xcor(), frog.ycor() - 10) < 30:  # Adjusted collision distance
             # Sound
-            winsound.PlaySound('audios/explosion_sfx.wav', winsound.SND_ASYNC)
+            winsound.PlaySound('audios/death_sfx.wav', winsound.SND_ASYNC)
 
             # Update the score
             score += 1
