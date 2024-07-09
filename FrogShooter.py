@@ -97,7 +97,7 @@ frog_speed = 2
 bullet_speed = 20  # Increased bullet speed
 
 # Hitbox offset
-frog_hitbox_offset = 20  # Adjusted to match the frog's body size
+frog_hitbox_offset = 25  # Adjusted to extend slightly lower than the frog's position
 
 def move_up_continuous():
     y = player.ycor() + 5  # Adjusted movement speed
@@ -142,8 +142,8 @@ def game_loop():
             bullet_state = "ready"
 
         # Check for collision using the distance method with adjusted hitbox offset
-        # Only consider collisions with the frog's body, not its head
-        if bullet.distance(frog.xcor(), frog.ycor()) < 20:  # Adjusted collision distance
+        # Extend hitbox slightly lower than frog's position
+        if bullet.distance(frog.xcor(), frog.ycor() - 10) < 30:  # Adjusted collision distance
             # Sound
             winsound.PlaySound('audios/explosion_sfx.wav', winsound.SND_ASYNC)
 
