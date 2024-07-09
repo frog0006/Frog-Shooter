@@ -101,14 +101,12 @@ bullet_speed = 20  # Increased bullet speed
 frog_hitbox_offset = 25  # Adjusted to extend slightly lower than the frog's position
 
 def move_up_continuous():
-    global frog_speed  # Declare frog_speed as global
     y = player.ycor() + 5  # Adjusted movement speed
     if y > 220:
         y = 220
     player.sety(y)
 
 def move_down_continuous():
-    global frog_speed  # Declare frog_speed as global
     y = player.ycor() - 5  # Adjusted movement speed
     if y < -220:
         y = -220
@@ -119,11 +117,16 @@ def move_frog():
 
     # Move the frog only if it's not frozen
     if not frog_frozen:
-        frog.sety(frog.ycor() + frog_speed)
-
+        new_y = frog.ycor() + frog_speed
         # Check border
-        if frog.ycor() > 220 or frog.ycor() < -220:
-            frog_speed *= -1  # Change direction
+        if new_y > 220:
+            new_y = 220
+            frog_speed *= -1
+        elif new_y < -220:
+            new_y = -220
+            frog_speed *= -1
+        
+        frog.sety(new_y)
 
     # Schedule next movement after a short interval
     wn.ontimer(move_frog, 50)
@@ -174,7 +177,7 @@ def game_loop():
         # Extend hitbox slightly lower than frog's position
         if frog.isvisible() and bullet.distance(frog.xcor(), frog.ycor() - 10) < 30:  # Adjusted collision distance
             # Sound
-            winsound.PlaySound('audios/explosion_sfx.wav', winsound.SND_ASYNC)
+            winsound.PlaySound('audios/death_sfx.wav', winsound.SND_ASYNC)
 
             # Update the score
             score += 1
