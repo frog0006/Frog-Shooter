@@ -91,7 +91,7 @@ frog_speed = 2
 bullet_speed = 10
 
 def game_loop():
-    global bullet_state, score
+    global bullet_state, score, frog_speed, bullet_speed
 
     frog.sety(frog.ycor() + frog_speed)
 
