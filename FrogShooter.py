@@ -117,6 +117,7 @@ def move_down_continuous():
 def move_frog():
     global frog_speed, frog_frozen
 
+    # Move the frog only if it's not frozen
     if not frog_frozen:
         frog.sety(frog.ycor() + frog_speed)
 
@@ -124,20 +125,15 @@ def move_frog():
         if frog.ycor() > 220 or frog.ycor() < -220:
             frog_speed *= -1  # Change direction
 
-    # Randomly adjust frog_speed every 5-10 seconds
-    random_adjustment_delay = random.uniform(5, 10)  # Random delay between adjustments
-    random_speed_change = random.randint(-2, 2)  # Random speed change between -2 to +2
-    frog_speed += random_speed_change
-
-    # Schedule next movement and speed adjustment
-    wn.ontimer(move_frog, int(random_adjustment_delay * 1000))
+    # Schedule next movement after a short interval
+    wn.ontimer(move_frog, 50)
 
 def freeze_frog():
     global frog_frozen, frog_speed
 
     if not frog_frozen:
-        # Freeze the frog for a random duration between 1-5 seconds
-        freeze_duration = random.uniform(1, 5)
+        # Freeze the frog for a random duration between 1-3 seconds
+        freeze_duration = random.uniform(1, 3)
         frog_frozen = True
         frog_speed = 0
 
@@ -196,7 +192,7 @@ def game_loop():
     # Repeat the game loop
     wn.ontimer(game_loop, 10)
 
-# Start the movement loop
+# Start the frog movement loop
 move_frog()
 
 # Start the first freeze period after a random delay between 5-20 seconds
