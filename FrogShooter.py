@@ -123,6 +123,14 @@ def move_frog():
     # Repeat the movement function
     wn.ontimer(move_frog, 10)
 
+def change_frog_speed():
+    global frog_speed
+    # Generate a random speed between 1 and 5
+    new_speed = random.randint(1, 5)
+    frog_speed = new_speed
+    # Schedule the next speed change in 5 seconds
+    wn.ontimer(change_frog_speed, 5000)
+
 def game_loop():
     global bullet_state, score
 
@@ -165,6 +173,9 @@ def game_loop():
 
 # Start the movement loop
 move_frog()
+
+# Start changing frog's speed every 5 seconds
+change_frog_speed()
 
 # Start the game loop
 game_loop()
