@@ -114,7 +114,7 @@ def move_frog():
     global frog_speed, frog_frozen
 
     if not frog_frozen:
-        new_y = frog.ycor() + frog_speed
+        new_y = frog.ycor() + (frog_speed / 10)  # Smaller steps
         if new_y > 220:
             new_y = 220
             frog_speed *= -1
@@ -124,7 +124,7 @@ def move_frog():
         
         frog.sety(new_y)
 
-    wn.ontimer(move_frog, 20)  # Reduced timer interval for smoother movement
+    wn.ontimer(move_frog, 20)  # High-frequency updates
 
 def freeze_frog():
     global frog_frozen, frog_speed
