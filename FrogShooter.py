@@ -6,7 +6,7 @@ import winsound
 bullet_state = "ready"
 up_pressed = False
 down_pressed = False
-frog_speed = 2
+frog_speed = 5  # Initial speed
 frog_frozen = False
 
 def move_up():
@@ -114,7 +114,7 @@ def move_frog():
     global frog_speed, frog_frozen
 
     if not frog_frozen:
-        new_y = frog.ycor() + (frog_speed / 10)  # Smaller steps
+        new_y = frog.ycor() + frog_speed
         if new_y > 220:
             new_y = 220
             frog_speed *= -1
@@ -124,15 +124,14 @@ def move_frog():
         
         frog.sety(new_y)
 
-    wn.ontimer(move_frog, 20)  # High-frequency updates
+    wn.ontimer(move_frog, 50)  # Adjusted for a smoother and faster movement
 
 def freeze_frog():
-    global frog_frozen, frog_speed
+    global frog_frozen
 
     if not frog_frozen:
         freeze_duration = random.uniform(1, 3)
         frog_frozen = True
-        frog_speed = 0
 
         wn.ontimer(unfreeze_frog, int(freeze_duration * 1000))
 
@@ -143,8 +142,7 @@ def unfreeze_frog():
     global frog_frozen, frog_speed
 
     frog_frozen = False
-    new_speed = random.randint(2, 8)
-    frog_speed = new_speed
+    frog_speed = random.randint(3, 10)  # Change speed to a random number from 3 to 10
 
 def game_loop():
     global bullet_state, score
