@@ -99,16 +99,20 @@ bullet_speed = 20
 frog_hitbox_offset = 25
 
 def move_up_continuous():
-    y = player.ycor() + 5
-    if y > 220:
-        y = 220
-    player.sety(y)
+    if up_pressed:
+        y = player.ycor() + 5
+        if y > 220:
+            y = 220
+        player.sety(y)
+    wn.ontimer(move_up_continuous, 10)
 
 def move_down_continuous():
-    y = player.ycor() - 5
-    if y < -220:
-        y = -220
-    player.sety(y)
+    if down_pressed:
+        y = player.ycor() - 5
+        if y < -220:
+            y = -220
+        player.sety(y)
+    wn.ontimer(move_down_continuous, 10)
 
 def move_frog():
     global frog_speed, frog_frozen
@@ -124,11 +128,11 @@ def move_frog():
         
         frog.sety(new_y)
 
-    wn.ontimer(move_frog, 10)  # Adjusted for a smoother and faster movement
+    wn.ontimer(move_frog, 10)
 
 def change_frog_speed():
     global frog_speed
-    frog_speed = random.randint(3, 10)  # Change speed to a random number from 3 to 10
+    frog_speed = random.randint(3, 10)
     next_speed_change = random.uniform(3, 10)
     wn.ontimer(change_frog_speed, int(next_speed_change * 1000))
 
@@ -158,7 +162,6 @@ def move_bullet():
             bullet.hideturtle()
             bullet_state = "ready"
 
-        # Adjusted collision detection logic
         frog_x = frog.xcor()
         frog_y = frog.ycor()
         bullet_x = bullet.xcor()
@@ -178,24 +181,23 @@ def move_bullet():
             frog.setposition(200, random.randint(-180, 180))
             frog.showturtle()
 
-    wn.ontimer(move_bullet, 10)  # Adjusted for smoother bullet movement
+    wn.ontimer(move_bullet, 10)
 
 def game_loop():
     if up_pressed:
         move_up_continuous()
     if down_pressed:
         move_down_continuous()
-
-    wn.ontimer(game_loop, 10)  # Adjusted for smoother player movement
+    wn.ontimer(game_loop, 10)
 
 move_frog()
 
 next_freeze_delay = random.uniform(5, 20)
 wn.ontimer(freeze_frog, int(next_freeze_delay * 1000))
 
-change_frog_speed()  # Start changing frog speed at random intervals
+change_frog_speed()
 
 game_loop()
-move_bullet()  # Start the bullet movement loop
+move_bullet()
 
 turtle.done()
