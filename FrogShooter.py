@@ -126,6 +126,12 @@ def move_frog():
 
     wn.ontimer(move_frog, 50)  # Adjusted for a smoother and faster movement
 
+def change_frog_speed():
+    global frog_speed
+    frog_speed = random.randint(3, 10)  # Change speed to a random number from 3 to 10
+    next_speed_change = random.uniform(5, 20)
+    wn.ontimer(change_frog_speed, int(next_speed_change * 1000))
+
 def freeze_frog():
     global frog_frozen
 
@@ -139,10 +145,8 @@ def freeze_frog():
     wn.ontimer(freeze_frog, int(next_freeze_delay * 1000))
 
 def unfreeze_frog():
-    global frog_frozen, frog_speed
-
+    global frog_frozen
     frog_frozen = False
-    frog_speed = random.randint(3, 10)  # Change speed to a random number from 3 to 10
 
 def game_loop():
     global bullet_state, score
@@ -159,7 +163,13 @@ def game_loop():
             bullet.hideturtle()
             bullet_state = "ready"
 
-        if frog.isvisible() and bullet.distance(frog.xcor(), frog.ycor() - 10) < 30:
+        # Adjusted collision detection logic
+        frog_x = frog.xcor()
+        frog_y = frog.ycor()
+        bullet_x = bullet.xcor()
+        bullet_y = bullet.ycor()
+
+        if (frog_x - 20 < bullet_x < frog_x + 20) and (frog_y - 30 < bullet_y < frog_y + 10):
             winsound.PlaySound('audios/death_sfx.wav', winsound.SND_ASYNC)
 
             score += 1
@@ -179,6 +189,8 @@ move_frog()
 
 next_freeze_delay = random.uniform(5, 20)
 wn.ontimer(freeze_frog, int(next_freeze_delay * 1000))
+
+change_frog_speed()  # Start changing frog speed at random intervals
 
 game_loop()
 
