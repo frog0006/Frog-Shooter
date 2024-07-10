@@ -124,7 +124,7 @@ def move_frog():
         
         frog.sety(new_y)
     # Schedule next movement after a short interval
-    wn.ontimer(move_frog, 50)
+    wn.ontimer(move_frog, 20)  # Update every 20 milliseconds
 
 def freeze_frog():
     global frog_frozen, frog_speed
@@ -200,7 +200,7 @@ def game_loop():
             frog.setposition(200, random.randint(-180, 180))
             frog.showturtle()
     # Repeat the game loop
-    wn.ontimer(game_loop, 10)
+    wn.ontimer(game_loop, 10)  # Update every 10 milliseconds
 
 # Start the frog movement loop
 move_frog()
