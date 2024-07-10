@@ -152,15 +152,22 @@ def is_collision(bullet, frog):
     # Define the frog's hitbox dimensions
     frog_width = 50  # Adjust as needed
     frog_height = 50  # Adjust as needed
+    hitbox_offset = 10  # Offset to move the hitbox down by 10 pixels
     
     bullet_x = bullet.xcor()
     bullet_y = bullet.ycor()
     frog_x = frog.xcor()
     frog_y = frog.ycor()
     
-    # Check if the bullet is within the frog's hitbox
-    if (frog_x - frog_width / 2 < bullet_x < frog_x + frog_width / 2 and
-        frog_y - frog_height / 2 < bullet_y < frog_y + frog_height / 2):
+    # Adjust the hitbox to move it 10 pixels down
+    hitbox_top = frog_y - frog_height / 2 - hitbox_offset
+    hitbox_bottom = frog_y + frog_height / 2 - hitbox_offset
+    hitbox_left = frog_x - frog_width / 2
+    hitbox_right = frog_x + frog_width / 2
+    
+    # Check if the bullet is within the adjusted hitbox
+    if (hitbox_left < bullet_x < hitbox_right and
+        hitbox_top < bullet_y < hitbox_bottom):
         return True
     return False
 
