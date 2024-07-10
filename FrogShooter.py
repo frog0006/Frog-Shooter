@@ -3,11 +3,11 @@ import random
 import winsound
 
 # Global Variables
-bullet_state = "ready"
+bullet_state = "ready"  # Initialize bullet state
 up_pressed = False
 down_pressed = False
-frog_speed = 5  # Initial speed
-frog_frozen = False
+frog_speed = 2  # Initialize frog_speed globally
+frog_frozen = False  # Flag to track if frog is currently frozen
 
 def move_up():
     global up_pressed
@@ -32,10 +32,9 @@ def fire_bullet():
         x = player.xcor()
         y = player.ycor()
         bullet.setposition(x + 40, y)
-        bullet.setheading(0)
+        bullet.setheading(0)  # Set bullet heading to right
         bullet.showturtle()
         bullet_state = "fired"
-        print(f"Fired bullet from ({x}, {y})")
 
 # Set up window
 wn = turtle.Screen()
@@ -51,6 +50,7 @@ turtle.register_shape('images/frogcloud_img.gif')
 turtle.register_shape('images/watergun_img.gif')
 
 # Score
+# Set score to be 0 initially
 score = 0
 
 # Draw score board
@@ -77,7 +77,7 @@ bullet.shape('triangle')
 bullet.shapesize(stretch_wid=0.2, stretch_len=1.5)
 bullet.up()
 bullet.speed(0)
-bullet.setheading(0)
+bullet.setheading(0)  # Initial bullet heading to right
 bullet.hideturtle()
 
 # Create frog turtle
@@ -95,13 +95,26 @@ turtle.onkeypress(move_down, 'Down')
 turtle.onkeyrelease(move_down_release, 'Down')
 turtle.onkey(fire_bullet, 'space')
 
-bullet_speed = 20
+bullet_speed = 20  # Increased bullet speed
+
+def move_up_continuous():
+    y = player.ycor() + 5  # Adjusted movement speed
+    if y > 220:
+        y = 220
+    player.sety(y)
+
+def move_down_continuous():
+    y = player.ycor() - 5  # Adjusted movement speed
+    if y < -220:
+        y = -220
+    player.sety(y)
 
 def move_frog():
     global frog_speed, frog_frozen
-
+    # Move the frog only if it's not frozen
     if not frog_frozen:
         new_y = frog.ycor() + frog_speed
+        # Check border
         if new_y > 220:
             new_y = 220
             frog_speed *= -1
@@ -110,85 +123,83 @@ def move_frog():
             frog_speed *= -1
         
         frog.sety(new_y)
-
-    wn.ontimer(move_frog, 10)
-
-def change_frog_speed():
-    global frog_speed
-    frog_speed = random.randint(3, 10)
-    next_speed_change = random.uniform(3, 10)
-    wn.ontimer(change_frog_speed, int(next_speed_change * 1000))
+    # Schedule next movement after a short interval
+    wn.ontimer(move_frog, 50)
 
 def freeze_frog():
-    global frog_frozen
-
+    global frog_frozen, frog_speed
     if not frog_frozen:
+        # Freeze the frog for a random duration between 1-3 seconds
         freeze_duration = random.uniform(1, 3)
         frog_frozen = True
-
+        frog_speed = 0
+        # Schedule unfreeze after freeze_duration seconds
         wn.ontimer(unfreeze_frog, int(freeze_duration * 1000))
-
+    # Schedule the next freeze period after a random delay between 5-20 seconds
     next_freeze_delay = random.uniform(5, 20)
     wn.ontimer(freeze_frog, int(next_freeze_delay * 1000))
 
 def unfreeze_frog():
-    global frog_frozen
+    global frog_frozen, frog_speed
+
+    # Unfreeze the frog and generate a new random speed between 1 and 5
     frog_frozen = False
+    new_speed = random.randint(1, 5)
+    new_speed = random.randint(2, 8)
+    frog_speed = new_speed
 
-def move_bullet():
+def is_collision(bullet, frog):
+    # Define the frog's hitbox dimensions
+    frog_width = 50  # Adjust as needed
+    frog_height = 50  # Adjust as needed
+    
+    bullet_x = bullet.xcor()
+    bullet_y = bullet.ycor()
+    frog_x = frog.xcor()
+    frog_y = frog.ycor()
+    
+    # Check if the bullet is within the frog's hitbox
+    if (frog_x - frog_width / 2 < bullet_x < frog_x + frog_width / 2 and
+        frog_y - frog_height / 2 < bullet_y < frog_y + frog_height / 2):
+        return True
+    return False
+
+def game_loop():
     global bullet_state, score
-
+    # Move the player
+    if up_pressed:
+        move_up_continuous()
+    if down_pressed:
+        move_down_continuous()
+    # Move the bullet
     if bullet_state == "fired":
         bullet.fd(bullet_speed)
-
+        # Check if the bullet goes off screen
         if bullet.xcor() > 300:
             bullet.hideturtle()
             bullet_state = "ready"
-            print("Bullet moved out of screen and reset.")
-
-        frog_x = frog.xcor()
-        frog_y = frog.ycor()
-        bullet_x = bullet.xcor()
-        bullet_y = bullet.ycor()
-
-        if (frog_x - 20 < bullet_x < frog_x + 20) and (frog_y - 30 < bullet_y < frog_y + 10):
+        # Check for collision using the new hitbox method
+        if frog.isvisible() and is_collision(bullet, frog):
+            # Sound
             winsound.PlaySound('audios/death_sfx.wav', winsound.SND_ASYNC)
-
+            # Update the score
             score += 1
             score_pen.clear()
             score_pen.write('Score: %s' % score, align='left', font=('Arial', 14, 'normal'))
-
+            # Reset frog and bullet
             bullet.hideturtle()
             bullet_state = "ready"
             frog.hideturtle()
-
             frog.setposition(200, random.randint(-180, 180))
             frog.showturtle()
+    # Repeat the game loop
+    wn.ontimer(game_loop, 10)
 
-    wn.ontimer(move_bullet, 10)
-
-def game_loop():
-    if up_pressed:
-        y = player.ycor() + 10  # Increased step size for faster movement
-        if y > 220:
-            y = 220
-        player.sety(y)
-    if down_pressed:
-        y = player.ycor() - 10  # Increased step size for faster movement
-        if y < -220:
-            y = -220
-        player.sety(y)
-
-    wn.ontimer(game_loop, 10)  # Reduced timer interval for smoother movement
-
+# Start the frog movement loop
 move_frog()
-
+# Start the first freeze period after a random delay between 5-20 seconds
 next_freeze_delay = random.uniform(5, 20)
 wn.ontimer(freeze_frog, int(next_freeze_delay * 1000))
-
-change_frog_speed()
-
+# Start the game loop
 game_loop()
-move_bullet()
-
 turtle.done()
