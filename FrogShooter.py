@@ -148,13 +148,8 @@ def unfreeze_frog():
     global frog_frozen
     frog_frozen = False
 
-def game_loop():
+def move_bullet():
     global bullet_state, score
-
-    if up_pressed:
-        move_up_continuous()
-    if down_pressed:
-        move_down_continuous()
 
     if bullet_state == "fired":
         bullet.fd(bullet_speed)
@@ -183,7 +178,15 @@ def game_loop():
             frog.setposition(200, random.randint(-180, 180))
             frog.showturtle()
 
-    wn.ontimer(game_loop, 10)
+    wn.ontimer(move_bullet, 10)  # Adjusted for smoother bullet movement
+
+def game_loop():
+    if up_pressed:
+        move_up_continuous()
+    if down_pressed:
+        move_down_continuous()
+
+    wn.ontimer(game_loop, 10)  # Adjusted for smoother player movement
 
 move_frog()
 
@@ -193,5 +196,6 @@ wn.ontimer(freeze_frog, int(next_freeze_delay * 1000))
 change_frog_speed()  # Start changing frog speed at random intervals
 
 game_loop()
+move_bullet()  # Start the bullet movement loop
 
 turtle.done()
