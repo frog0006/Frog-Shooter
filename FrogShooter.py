@@ -98,21 +98,18 @@ bullet_speed = 20
 
 frog_hitbox_offset = 25
 
-def move_up_continuous():
+def move_player():
     if up_pressed:
         y = player.ycor() + 5
         if y > 220:
             y = 220
         player.sety(y)
-    wn.ontimer(move_up_continuous, 50)  # Adjusted to 50ms for smoother continuous movement
-
-def move_down_continuous():
     if down_pressed:
         y = player.ycor() - 5
         if y < -220:
             y = -220
         player.sety(y)
-    wn.ontimer(move_down_continuous, 50)  # Adjusted to 50ms for smoother continuous movement
+    wn.ontimer(move_player, 20)  # Adjusted to 20ms for smoother continuous movement
 
 def move_frog():
     global frog_speed, frog_frozen
@@ -184,21 +181,16 @@ def move_bullet():
     wn.ontimer(move_bullet, 10)
 
 def game_loop():
-    if up_pressed:
-        move_up_continuous()
-    if down_pressed:
-        move_down_continuous()
+    move_player()
+    move_frog()
+    move_bullet()
     wn.ontimer(game_loop, 10)
-
-move_frog()
 
 next_freeze_delay = random.uniform(5, 20)
 wn.ontimer(freeze_frog, int(next_freeze_delay * 1000))
 
 change_frog_speed()
 
-move_up_continuous()  # Start the continuous movement for up
-move_down_continuous()  # Start the continuous movement for down
-move_bullet()
+game_loop()
 
 turtle.done()
