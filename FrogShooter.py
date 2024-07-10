@@ -104,7 +104,7 @@ def move_up_continuous():
         if y > 220:
             y = 220
         player.sety(y)
-    wn.ontimer(move_up_continuous, 10)
+    wn.ontimer(move_up_continuous, 50)  # Adjusted to 50ms for smoother continuous movement
 
 def move_down_continuous():
     if down_pressed:
@@ -112,7 +112,7 @@ def move_down_continuous():
         if y < -220:
             y = -220
         player.sety(y)
-    wn.ontimer(move_down_continuous, 10)
+    wn.ontimer(move_down_continuous, 50)  # Adjusted to 50ms for smoother continuous movement
 
 def move_frog():
     global frog_speed, frog_frozen
@@ -197,7 +197,8 @@ wn.ontimer(freeze_frog, int(next_freeze_delay * 1000))
 
 change_frog_speed()
 
-game_loop()
+move_up_continuous()  # Start the continuous movement for up
+move_down_continuous()  # Start the continuous movement for down
 move_bullet()
 
 turtle.done()
