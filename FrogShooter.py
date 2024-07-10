@@ -167,17 +167,17 @@ def move_bullet():
 
 def game_loop():
     if up_pressed:
-        y = player.ycor() + 5
+        y = player.ycor() + 10  # Increased step size for faster movement
         if y > 220:
             y = 220
         player.sety(y)
     if down_pressed:
-        y = player.ycor() - 5
+        y = player.ycor() - 10  # Increased step size for faster movement
         if y < -220:
             y = -220
         player.sety(y)
 
-    wn.ontimer(game_loop, 20)  # Adjusted to 20ms for smoother movement
+    wn.ontimer(game_loop, 10)  # Reduced timer interval for smoother movement
 
 move_frog()
 
