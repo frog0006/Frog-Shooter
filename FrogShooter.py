@@ -129,7 +129,7 @@ def move_frog():
 def change_frog_speed():
     global frog_speed
     frog_speed = random.randint(3, 10)  # Change speed to a random number from 3 to 10
-    next_speed_change = random.uniform(5, 20)
+    next_speed_change = random.uniform(3, 12)
     wn.ontimer(change_frog_speed, int(next_speed_change * 1000))
 
 def freeze_frog():
