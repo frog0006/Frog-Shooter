@@ -124,7 +124,7 @@ def move_frog():
         
         frog.sety(new_y)
     # Schedule next movement after a short interval
-    wn.ontimer(move_frog, 20)  # Update every 20 milliseconds
+    wn.ontimer(move_frog, 10)
 
 def freeze_frog():
     global frog_frozen, frog_speed
@@ -142,10 +142,9 @@ def freeze_frog():
 def unfreeze_frog():
     global frog_frozen, frog_speed
 
-    # Unfreeze the frog and generate a new random speed between 1 and 5
+    # Unfreeze the frog and generate a new random speed
     frog_frozen = False
-    new_speed = random.randint(1, 5)
-    new_speed = random.randint(2, 8)
+    new_speed = random.randint(3, 8)
     frog_speed = new_speed
 
 def is_collision(bullet, frog):
