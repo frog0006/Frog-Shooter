@@ -124,7 +124,7 @@ def move_frog():
         
         frog.sety(new_y)
 
-    wn.ontimer(move_frog, 50)  # Adjusted for a smoother and faster movement
+    wn.ontimer(move_frog, 10)  # Adjusted for a smoother and faster movement
 
 def change_frog_speed():
     global frog_speed
