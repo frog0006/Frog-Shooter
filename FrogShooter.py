@@ -35,6 +35,7 @@ def fire_bullet():
         bullet.setheading(0)
         bullet.showturtle()
         bullet_state = "fired"
+        print(f"Fired bullet from ({x}, {y})")
 
 # Set up window
 wn = turtle.Screen()
@@ -143,6 +144,7 @@ def move_bullet():
         if bullet.xcor() > 300:
             bullet.hideturtle()
             bullet_state = "ready"
+            print("Bullet moved out of screen and reset.")
 
         frog_x = frog.xcor()
         frog_y = frog.ycor()
