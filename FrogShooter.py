@@ -98,13 +98,13 @@ turtle.onkeypress(fire_bullet, 'space')
 bullet_speed = 20  # Increased bullet speed
 
 def move_up_continuous():
-    y = player.ycor() + 5  # Adjusted movement speed
+    y = player.ycor() + 2  # Adjusted movement speed to be slower
     if y > 220:
         y = 220
     player.sety(y)
 
 def move_down_continuous():
-    y = player.ycor() - 5  # Adjusted movement speed
+    y = player.ycor() - 2  # Adjusted movement speed to be slower
     if y < -220:
         y = -220
     player.sety(y)
