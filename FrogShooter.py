@@ -147,11 +147,11 @@ def unfreeze_frog():
 def change_frog_speed():
     global frog_speed
     if not frog_frozen:
-        # Generate a new random speed for the frog
-        new_speed = random.randint(3, 8) * random.choice([-1, 1])
+        # Generate a new random speed for the frog (1 to 3 instead of 3 to 8)
+        new_speed = random.uniform(1, 3) * random.choice([-1, 1])
         frog_speed = new_speed
-    # Schedule the next speed change after a random delay between 1-5 seconds
-    next_speed_change = random.uniform(1, 5) * 1000
+    # Schedule the next speed change after a random delay
+    next_speed_change = random.uniform(3, 10) * 1000
     wn.ontimer(change_frog_speed, int(next_speed_change))
 
 def is_collision(bullet, frog):
