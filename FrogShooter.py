@@ -227,8 +227,7 @@ def game_loop():
             frog_frozen = True
             # Move the frog to the right by 200 pixels but not exceeding the boundary
             respawn_frog()
-            # Respawn the frog after 3 seconds
-            wn.ontimer(respawn_frog, 3000)
+            # No need to call respawn_frog again after 3 seconds
 
     wn.update()  # Update the screen with all changes
     # Repeat the game loop
