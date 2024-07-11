@@ -6,7 +6,8 @@ import winsound
 bullet_state = "ready"  # Initialize bullet state
 up_pressed = False
 down_pressed = False
-frog_speed = -1  # Initialize frog_speed to move left
+frog_speed_x = -1  # Initialize frog_speed to move left
+frog_speed_y = 2  # Initialize frog's vertical speed
 frog_frozen = False  # Flag to track if frog is currently frozen
 
 def move_up():
@@ -110,26 +111,34 @@ def move_down_continuous():
     player.sety(y)
 
 def move_frog():
-    global frog_speed, frog_frozen
+    global frog_speed_x, frog_speed_y, frog_frozen
     # Move the frog only if it's not frozen
     if not frog_frozen:
-        new_x = frog.xcor() + frog_speed
+        new_x = frog.xcor() + frog_speed_x
+        new_y = frog.ycor() + frog_speed_y
         # Check border
         if new_x < -300:
             new_x = 300
-            frog.setposition(new_x, random.randint(-220, 220))
-        else:
-            frog.setx(new_x)
+        if new_y > 220:
+            new_y = 220
+            frog_speed_y *= -1
+        elif new_y < -220:
+            new_y = -220
+            frog_speed_y *= -1
+        
+        frog.setx(new_x)
+        frog.sety(new_y)
     # Schedule next movement after a short interval
     wn.ontimer(move_frog, 10)
 
 def freeze_frog():
-    global frog_frozen, frog_speed
+    global frog_frozen, frog_speed_x, frog_speed_y
     if not frog_frozen:
         # Freeze the frog for a random duration between 1-3 seconds
         freeze_duration = random.uniform(1, 3)
         frog_frozen = True
-        frog_speed = 0
+        frog_speed_x = 0
+        frog_speed_y = 0
         # Schedule unfreeze after freeze_duration seconds
         wn.ontimer(unfreeze_frog, int(freeze_duration * 1000))
     # Schedule the next freeze period after a random delay between 5-20 seconds
@@ -137,17 +146,17 @@ def freeze_frog():
     wn.ontimer(freeze_frog, int(next_freeze_delay * 1000))
 
 def unfreeze_frog():
-    global frog_frozen, frog_speed
+    global frog_frozen, frog_speed_x
     # Unfreeze the frog
     frog_frozen = False
-    frog_speed = -1
+    frog_speed_x = -1
 
 def change_frog_speed():
-    global frog_speed
+    global frog_speed_y
     if not frog_frozen:
-        # Generate a new random speed for the frog (0.5 to 1.5 instead of 3 to 8)
-        new_speed = random.uniform(0.5, 1.5) * -1
-        frog_speed = new_speed
+        # Generate a new random vertical speed for the frog (0.5 to 1.5)
+        new_speed_y = random.uniform(0.5, 1.5) * random.choice([-1, 1])
+        frog_speed_y = new_speed_y
     # Schedule the next speed change after a random delay
     next_speed_change = random.uniform(3, 10) * 1000
     wn.ontimer(change_frog_speed, int(next_speed_change))
@@ -176,11 +185,15 @@ def is_collision(bullet, frog):
     return False
 
 def respawn_frog():
-    global frog_frozen, frog_speed
-    frog.setposition(frog.xcor() + 50, random.randint(-220, 220))
+    global frog_frozen, frog_speed_x
+    new_x = frog.xcor() + 200
+    if new_x > 300:
+        new_x = 300
+    new_y = random.randint(-220, 220)
+    frog.setposition(new_x, new_y)
     frog.showturtle()
     frog_frozen = False
-    frog_speed = -1
+    frog_speed_x = -1
 
 def game_loop():
     global bullet_state, score
@@ -212,6 +225,8 @@ def game_loop():
             bullet_state = "ready"
             frog.hideturtle()
             frog_frozen = True
+            # Move the frog to the right by 200 pixels but not exceeding the boundary
+            respawn_frog()
             # Respawn the frog after 3 seconds
             wn.ontimer(respawn_frog, 3000)
 
