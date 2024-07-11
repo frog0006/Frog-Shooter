@@ -93,7 +93,7 @@ turtle.onkeypress(move_up, 'Up')
 turtle.onkeyrelease(move_up_release, 'Up')
 turtle.onkeypress(move_down, 'Down')
 turtle.onkeyrelease(move_down_release, 'Down')
-turtle.onkey(fire_bullet, 'space')
+turtle.onkeypress(fire_bullet, 'space')
 
 bullet_speed = 20  # Increased bullet speed
 
@@ -172,11 +172,14 @@ def is_collision(bullet, frog):
 
 def game_loop():
     global bullet_state, score
+    wn.tracer(0)  # Turn off automatic screen updates
+
     # Move the player
     if up_pressed:
         move_up_continuous()
     if down_pressed:
         move_down_continuous()
+
     # Move the bullet
     if bullet_state == "fired":
         bullet.fd(bullet_speed)
@@ -198,6 +201,8 @@ def game_loop():
             frog.hideturtle()
             frog.setposition(200, random.randint(-180, 180))
             frog.showturtle()
+
+    wn.update()  # Update the screen with all changes
     # Repeat the game loop
     wn.ontimer(game_loop, 10)  # Update every 10 milliseconds
 
