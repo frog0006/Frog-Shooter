@@ -1,7 +1,6 @@
 import turtle
 import random
 import winsound
-import time
 
 # Global Variables
 bullet_state = "ready"  # Initialize bullet state
@@ -10,6 +9,7 @@ down_pressed = False
 frog_speed_x = -1  # Initialize frog_speed to move left
 frog_speed_y = 2  # Initialize frog's vertical speed
 frog_frozen = False  # Flag to track if frog is currently frozen
+death_sound_playing = False  # Flag to track if death sound is playing
 
 def move_up():
     global up_pressed
@@ -29,15 +29,36 @@ def move_down_release():
 
 def fire_bullet():
     global bullet_state
-    if bullet_state == "ready":
+    if bullet_state == "ready" and not death_sound_playing:
+        winsound.PlaySound('audios/laser_sfx.wav', winsound.SND_ASYNC)
         x = player.xcor()
         y = player.ycor()
         bullet.setposition(x + 40, y)
         bullet.setheading(0)  # Set bullet heading to right
         bullet.showturtle()
         bullet_state = "fired"
-        # Play the gunfire sound
-        winsound.PlaySound('audios/laser_sfx.wav', winsound.SND_ASYNC)
+
+def restart_game():
+    global score, bullet_state, frog_speed_x, frog_speed_y, frog_frozen
+    # Reset the score
+    score = 0
+    score_pen.clear()
+    score_pen.write('Score: %s' % score, align='left', font=('Arial', 14, 'normal'))
+    # Reset player position
+    player.setposition(-220, 0)
+    player.setheading(90)
+    # Reset bullet state
+    bullet.hideturtle()
+    bullet_state = "ready"
+    # Reset frog state
+    frog.setposition(200, 0)
+    frog.showturtle()
+    frog_frozen = False
+    frog_speed_x = -1
+    frog_speed_y = 2
+    # Clear any game over message
+    message_pen.clear()
+    wn.listen()
 
 # Set up window
 wn = turtle.Screen()
@@ -115,6 +136,7 @@ turtle.onkeyrelease(move_up_release, 'Up')
 turtle.onkeypress(move_down, 'Down')
 turtle.onkeyrelease(move_down_release, 'Down')
 turtle.onkeypress(fire_bullet, 'space')
+turtle.onkeypress(restart_game, 'r')
 
 bullet_speed = 10  # Bullet speed
 
@@ -153,16 +175,22 @@ def move_frog():
     # Schedule next movement after a short interval
     wn.ontimer(move_frog, 10)
 
+message_pen = turtle.Turtle()
+message_pen.speed(0)
+message_pen.color('purple')
+message_pen.up()
+message_pen.hideturtle()
+
 def display_message(message1, message2):
-    message_pen = turtle.Turtle()
-    message_pen.speed(0)
-    message_pen.color('purple')
-    message_pen.up()
+    message_pen.clear()
     message_pen.setposition(0, 210)  # Move 10 pixels down from original 220
-    message_pen.hideturtle()
+    message_pen.color('purple')
     message_pen.write(message1, align='center', font=('Arial', 16, 'normal'))
     message_pen.setposition(0, 180)  # Move 10 pixels down from original 190
     message_pen.write(message2, align='center', font=('Arial', 16, 'normal'))
+    message_pen.setposition(0, 150)  # Move 10 pixels down from the second message
+    message_pen.color('dark green')
+    message_pen.write('Press R to try again', align='center', font=('Arial', 14, 'normal'))
 
 def freeze_frog():
     global frog_frozen, frog_speed_x, frog_speed_y
@@ -228,6 +256,16 @@ def respawn_frog():
     frog_frozen = False
     frog_speed_x = -1
 
+def play_death_sound():
+    global death_sound_playing
+    death_sound_playing = True
+    winsound.PlaySound('audios/death_sfx.wav', winsound.SND_ASYNC)
+    wn.ontimer(end_death_sound, 500)  # Adjust the timer to the length of the sound effect
+
+def end_death_sound():
+    global death_sound_playing
+    death_sound_playing = False
+
 def game_loop():
     global bullet_state, score
     wn.tracer(0)  # Turn off automatic screen updates
@@ -247,9 +285,8 @@ def game_loop():
             bullet_state = "ready"
         # Check for collision using the new hitbox method
         if frog.isvisible() and is_collision(bullet, frog):
-            # Frog Sound
-            winsound.PlaySound('audios/death_sfx.wav', winsound.SND_FILENAME)
-            time.sleep(0.5)  # Adjust the sleep time to the length of the sound effect
+            # Play death sound without blocking
+            play_death_sound()
             # Update the score
             score += 1
             score_pen.clear()
