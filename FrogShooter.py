@@ -58,10 +58,11 @@ def restart_game():
     frog_speed_y = 2
     # Clear any game over message
     message_pen.clear()
-    # Restart frog movement and other behaviors
+    # Immediately invoke the frog movement and behaviors
     move_frog()
-    freeze_frog()
     change_frog_speed()
+    # Start the first freeze period after a short delay to ensure the frog moves first
+    wn.ontimer(freeze_frog, int(random.uniform(5, 20) * 1000))
     wn.listen()
 
 # Set up window
