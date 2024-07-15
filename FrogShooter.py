@@ -58,6 +58,10 @@ def restart_game():
     frog_speed_y = 2
     # Clear any game over message
     message_pen.clear()
+    # Restart frog movement and other behaviors
+    move_frog()
+    freeze_frog()
+    change_frog_speed()
     wn.listen()
 
 # Set up window
