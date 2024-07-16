@@ -374,5 +374,5 @@ wn.ontimer(freeze_frog, int(next_freeze_delay * 1000))
 # Start the game loop
 game_loop()
 # Schedule the first powerup appearance
-wn.ontimer(show_powerup, int(random.uniform(10, 30) * 1000))
+wn.ontimer(show_powerup, 10000)  # First powerup appears after 10 seconds
 turtle.done()
