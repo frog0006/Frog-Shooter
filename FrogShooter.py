@@ -11,6 +11,8 @@ frog_speed_y = 2  # Initialize frog's vertical speed
 frog_frozen = False  # Flag to track if frog is currently frozen
 death_sound_playing = False  # Flag to track if death sound is playing
 powerup_visible = False  # Flag to track if powerup is visible
+player_speed = 2  # Default player speed
+frog_speed_factor = 1  # Speed factor for frog
 
 def move_up():
     global up_pressed
@@ -40,23 +42,25 @@ def fire_bullet():
         bullet_state = "fired"
 
 def restart_game():
-    global score, bullet_state, frog_speed_x, frog_speed_y, frog_frozen, powerup_visible
+    global score, bullet_state, frog_speed_x, frog_speed_y, frog_frozen, powerup_visible, player_speed, frog_speed_factor
     # Reset the score
     score = 0
     score_pen.clear()
     score_pen.write('Score: %s' % score, align='left', font=('Arial', 14, 'normal'))
-    # Reset player position
+    # Reset player position and speed
     player.setposition(-220, 0)
     player.setheading(90)
+    player_speed = 2
     # Reset bullet state
     bullet.hideturtle()
     bullet_state = "ready"
-    # Reset frog state
+    # Reset frog state and speed
     frog.setposition(200, 0)
     frog.showturtle()
     frog_frozen = False
     frog_speed_x = -1
     frog_speed_y = 2
+    frog_speed_factor = 1
     # Hide powerup
     powerup.hideturtle()
     powerup_visible = False
@@ -158,23 +162,23 @@ turtle.onkeypress(restart_game, 'r')
 bullet_speed = 10  # Bullet speed
 
 def move_up_continuous():
-    y = player.ycor() + 2  # Player speed
+    y = player.ycor() + player_speed  # Player speed
     if y > 220:
         y = 220
     player.sety(y)
 
 def move_down_continuous():
-    y = player.ycor() - 2  # Player speed
+    y = player.ycor() - player_speed  # Player speed
     if y < -220:
         y = -220
     player.sety(y)
 
 def move_frog():
-    global frog_speed_x, frog_speed_y, frog_frozen
+    global frog_speed_x, frog_speed_y, frog_frozen, frog_speed_factor
     # Move the frog only if it's not frozen
     if not frog_frozen:
-        new_x = frog.xcor() + frog_speed_x
-        new_y = frog.ycor() + frog_speed_y
+        new_x = frog.xcor() + frog_speed_x * frog_speed_factor
+        new_y = frog.ycor() + frog_speed_y * frog_speed_factor
         # Check border
         if new_x < -300:
             frog.hideturtle()
@@ -230,7 +234,7 @@ def unfreeze_frog():
     frog_speed_x = -1
 
 def change_frog_speed():
-    global frog_speed_y
+    global frog_speed_y, frog_speed_factor
     if not frog_frozen:
         # Generate a new random vertical speed for the frog (0.5 to 1.5)
         new_speed_y = random.uniform(0.5, 1.5) * random.choice([-1, 1])
@@ -262,21 +266,32 @@ def is_collision(bullet, frog):
         return True
     return False
 
-def is_powerup_collision(player, powerup):
-    # Define the player's hitbox dimensions
-    player_width = 40
-    player_height = 40
+def is_powerup_collision(bullet, powerup):
+    # Define the powerup's hitbox dimensions
+    powerup_width = 40
+    powerup_height = 40
     
-    player_x = player.xcor()
-    player_y = player.ycor()
+    bullet_x = bullet.xcor()
+    bullet_y = bullet.ycor()
     powerup_x = powerup.xcor()
     powerup_y = powerup.ycor()
     
-    # Check if the player is within the powerup hitbox
-    if (powerup_x - player_width / 2 < player_x < powerup_x + player_width / 2 and
-        powerup_y - player_height / 2 < player_y < powerup_y + player_height / 2):
+    # Check if the bullet is within the powerup hitbox
+    if (powerup_x - powerup_width / 2 < bullet_x < powerup_x + powerup_width / 2 and
+        powerup_y - powerup_height / 2 < bullet_y < powerup_y + powerup_height / 2):
         return True
     return False
+
+def apply_powerup():
+    global player_speed, frog_speed_factor
+    # Randomly choose a powerup effect
+    powerup_effect = random.choice(['speed_boost', 'slow_frog'])
+    if powerup_effect == 'speed_boost':
+        player_speed = 4  # Increase player speed
+        display_message("Powerup!", "Increased Player Speed!")
+    elif powerup_effect == 'slow_frog':
+        frog_speed_factor = 0.5  # Slow down the frog
+        display_message("Powerup!", "Frog Slowed Down!")
 
 def respawn_frog():
     global frog_frozen, frog_speed_x
@@ -335,7 +350,7 @@ def game_loop():
         if bullet.xcor() > 300:
             bullet.hideturtle()
             bullet_state = "ready"
-        # Check for collision using the new hitbox method
+        # Check for collision with the frog
         if frog.isvisible() and is_collision(bullet, frog):
             # Play death sound without blocking
             play_death_sound()
@@ -351,15 +366,12 @@ def game_loop():
             # Move the frog to the right by 200 pixels but not exceeding the boundary
             respawn_frog()
 
-    # Check for powerup collision
-    if powerup_visible and is_powerup_collision(player, powerup):
-        # Hide the powerup and apply its effect
-        powerup.hideturtle()
-        powerup_visible = False
-        # Apply powerup effect, e.g., increase score or player speed
-        score += 5  # Example effect: increase score by 5
-        score_pen.clear()
-        score_pen.write('Score: %s' % score, align='left', font=('Arial', 14, 'normal'))
+        # Check for collision with the powerup
+        if powerup_visible and is_powerup_collision(bullet, powerup):
+            # Hide the powerup and apply its effect
+            powerup.hideturtle()
+            powerup_visible = False
+            apply_powerup()
 
     wn.update()  # Update the screen with all changes
     # Repeat the game loop
