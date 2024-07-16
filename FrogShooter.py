@@ -293,6 +293,18 @@ def apply_powerup():
         frog_speed_factor = 0.5  # Slow down the frog
         display_message("Powerup!", "Frog Slowed Down!")
 
+    # Set a timer to remove the powerup effect after a duration between 5-10 seconds
+    powerup_duration = random.uniform(5, 10)
+    wn.ontimer(remove_powerup, int(powerup_duration * 1000))
+
+def remove_powerup():
+    global player_speed, frog_speed_factor
+    # Reset the player speed and frog speed factor to default values
+    player_speed = 2
+    frog_speed_factor = 1
+    # Clear the powerup message
+    message_pen.clear()
+
 def respawn_frog():
     global frog_frozen, frog_speed_x
     new_x = frog.xcor() + 200
