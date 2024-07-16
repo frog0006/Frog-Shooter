@@ -182,7 +182,7 @@ def move_frog():
         # Check border
         if new_x < -300:
             frog.hideturtle()
-            display_message("You Lost!", "The Frog ate all your crops!")
+            display_message("You Lost!", "The Frog ate all your crops!", show_restart=True)
             return
         if new_y > 220:
             new_y = 220
@@ -202,16 +202,17 @@ message_pen.color('purple')
 message_pen.up()
 message_pen.hideturtle()
 
-def display_message(message1, message2):
+def display_message(message1, message2, show_restart=False):
     message_pen.clear()
     message_pen.setposition(0, 210)  # Move 10 pixels down from original 220
     message_pen.color('purple')
     message_pen.write(message1, align='center', font=('Arial', 16, 'normal'))
     message_pen.setposition(0, 180)  # Move 10 pixels down from original 190
     message_pen.write(message2, align='center', font=('Arial', 16, 'normal'))
-    message_pen.setposition(0, 150)  # Move 10 pixels down from the second message
-    message_pen.color('dark green')
-    message_pen.write('Press R to try again', align='center', font=('Arial', 14, 'normal'))
+    if show_restart:
+        message_pen.setposition(0, 150)  # Move 10 pixels down from the second message
+        message_pen.color('dark green')
+        message_pen.write('Press R to try again', align='center', font=('Arial', 14, 'normal'))
 
 def freeze_frog():
     global frog_frozen, frog_speed_x, frog_speed_y
