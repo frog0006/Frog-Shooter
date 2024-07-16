@@ -307,8 +307,15 @@ def show_powerup():
         powerup.setposition(x, y)
         powerup.showturtle()
         powerup_visible = True
+        # Hide the powerup after a certain duration (e.g., 5 seconds)
+        wn.ontimer(hide_powerup, 5000)
     # Schedule the next powerup appearance after a random delay between 10-30 seconds
     wn.ontimer(show_powerup, int(random.uniform(10, 30) * 1000))
+
+def hide_powerup():
+    global powerup_visible
+    powerup.hideturtle()
+    powerup_visible = False
 
 def game_loop():
     global bullet_state, score, powerup_visible
