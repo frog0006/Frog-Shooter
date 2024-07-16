@@ -10,6 +10,7 @@ frog_speed_x = -1  # Initialize frog_speed to move left
 frog_speed_y = 2  # Initialize frog's vertical speed
 frog_frozen = False  # Flag to track if frog is currently frozen
 death_sound_playing = False  # Flag to track if death sound is playing
+powerup_visible = False  # Flag to track if powerup is visible
 
 def move_up():
     global up_pressed
@@ -39,7 +40,7 @@ def fire_bullet():
         bullet_state = "fired"
 
 def restart_game():
-    global score, bullet_state, frog_speed_x, frog_speed_y, frog_frozen
+    global score, bullet_state, frog_speed_x, frog_speed_y, frog_frozen, powerup_visible
     # Reset the score
     score = 0
     score_pen.clear()
@@ -56,6 +57,9 @@ def restart_game():
     frog_frozen = False
     frog_speed_x = -1
     frog_speed_y = 2
+    # Hide powerup
+    powerup.hideturtle()
+    powerup_visible = False
     # Clear any game over message
     message_pen.clear()
     # Immediately invoke the frog movement and behaviors
@@ -77,6 +81,7 @@ wn.bgpic('images/lake.gif')
 # Register shapes
 turtle.register_shape('images/frogcloud_img.gif')
 turtle.register_shape('images/watergun_img.gif')
+turtle.register_shape('images/powerup.gif')
 
 # Score
 score = 0
@@ -133,6 +138,13 @@ frog.shape('images/frogcloud_img.gif')
 frog.up()
 frog.speed(0)
 frog.setposition(200, 0)
+
+# Create powerup turtle
+powerup = turtle.Turtle()
+powerup.shape('images/powerup.gif')
+powerup.up()
+powerup.speed(0)
+powerup.hideturtle()
 
 # Create keyboard bindings
 turtle.listen()
@@ -250,6 +262,22 @@ def is_collision(bullet, frog):
         return True
     return False
 
+def is_powerup_collision(player, powerup):
+    # Define the player's hitbox dimensions
+    player_width = 40
+    player_height = 40
+    
+    player_x = player.xcor()
+    player_y = player.ycor()
+    powerup_x = powerup.xcor()
+    powerup_y = powerup.ycor()
+    
+    # Check if the player is within the powerup hitbox
+    if (powerup_x - player_width / 2 < player_x < powerup_x + player_width / 2 and
+        powerup_y - player_height / 2 < player_y < powerup_y + player_height / 2):
+        return True
+    return False
+
 def respawn_frog():
     global frog_frozen, frog_speed_x
     new_x = frog.xcor() + 200
@@ -271,8 +299,19 @@ def end_death_sound():
     global death_sound_playing
     death_sound_playing = False
 
+def show_powerup():
+    global powerup_visible
+    if not powerup_visible:
+        x = random.randint(-200, 200)
+        y = random.randint(-200, 200)
+        powerup.setposition(x, y)
+        powerup.showturtle()
+        powerup_visible = True
+    # Schedule the next powerup appearance after a random delay between 10-30 seconds
+    wn.ontimer(show_powerup, int(random.uniform(10, 30) * 1000))
+
 def game_loop():
-    global bullet_state, score
+    global bullet_state, score, powerup_visible
     wn.tracer(0)  # Turn off automatic screen updates
 
     # Move the player
@@ -304,6 +343,16 @@ def game_loop():
             # Move the frog to the right by 200 pixels but not exceeding the boundary
             respawn_frog()
 
+    # Check for powerup collision
+    if powerup_visible and is_powerup_collision(player, powerup):
+        # Hide the powerup and apply its effect
+        powerup.hideturtle()
+        powerup_visible = False
+        # Apply powerup effect, e.g., increase score or player speed
+        score += 5  # Example effect: increase score by 5
+        score_pen.clear()
+        score_pen.write('Score: %s' % score, align='left', font=('Arial', 14, 'normal'))
+
     wn.update()  # Update the screen with all changes
     # Repeat the game loop
     wn.ontimer(game_loop, 10)  # Update every 10 milliseconds
@@ -317,4 +366,6 @@ next_freeze_delay = random.uniform(5, 20)
 wn.ontimer(freeze_frog, int(next_freeze_delay * 1000))
 # Start the game loop
 game_loop()
+# Schedule the first powerup appearance
+wn.ontimer(show_powerup, int(random.uniform(10, 30) * 1000))
 turtle.done()
