@@ -309,8 +309,9 @@ def show_powerup():
         powerup_visible = True
         # Hide the powerup after a certain duration (e.g., 5 seconds)
         wn.ontimer(hide_powerup, 5000)
-    # Schedule the next powerup appearance after a random delay between 10-30 seconds
-    wn.ontimer(show_powerup, int(random.uniform(10, 30) * 1000))
+    # Schedule the next powerup appearance after a random delay between 10-25 seconds
+    next_powerup_delay = random.uniform(10, 25) * 1000
+    wn.ontimer(show_powerup, int(next_powerup_delay))
 
 def hide_powerup():
     global powerup_visible
@@ -374,5 +375,5 @@ wn.ontimer(freeze_frog, int(next_freeze_delay * 1000))
 # Start the game loop
 game_loop()
 # Schedule the first powerup appearance
-wn.ontimer(show_powerup, 10000)  # First powerup appears after 10 seconds
+wn.ontimer(show_powerup, int(random.uniform(10, 25) * 1000))
 turtle.done()
