@@ -249,13 +249,13 @@ def unfreeze_frog(cycle):
 def change_frog_speed(cycle):
     global frog_speed_y, frog_speed_factor
     if not frog_frozen and cycle == restart_cycle:
-        # Generate a new random vertical speed for the frog (0.5 to 1.5)
-        new_speed_y = random.uniform(0.5, 1.5) * random.choice([-1, 1])
+        # Generate a new random vertical speed for the frog (-5 to 5)
+        new_speed_y = random.uniform(-5, 5)
         frog_speed_y = new_speed_y
-    # Schedule the next speed change after a random delay
+    # Schedule the next speed change every 5 seconds
     if cycle == restart_cycle:
-        next_speed_change = random.uniform(3, 10) * 1000
-        wn.ontimer(lambda: change_frog_speed(cycle), int(next_speed_change))
+        next_speed_change = 5 * 1000
+        wn.ontimer(lambda: change_frog_speed(cycle), next_speed_change)
 
 def is_collision(bullet, frog):
     # Define the frog's hitbox dimensions
