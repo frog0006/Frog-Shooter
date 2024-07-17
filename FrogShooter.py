@@ -6,7 +6,7 @@ import winsound
 bullet_state = "ready"  # Initialize bullet state
 up_pressed = False
 down_pressed = False
-frog_speed_x = -2  # Initialize frog_speed to move left
+frog_speed_x = -1.5  # Initialize frog_speed to move left
 frog_speed_y = 2  # Initialize frog's vertical speed
 frog_frozen = False  # Flag to track if frog is currently frozen
 death_sound_playing = False  # Flag to track if death sound is playing
@@ -65,7 +65,7 @@ def restart_game():
     frog.setposition(200, 0)
     frog.showturtle()
     frog_frozen = False
-    frog_speed_x = -2
+    frog_speed_x = -1.5
     frog_speed_y = 2
     frog_speed_factor = 1
     # Hide powerup
@@ -244,18 +244,18 @@ def unfreeze_frog(cycle):
     # Unfreeze the frog only if the cycle matches the current restart cycle
     if cycle == restart_cycle:
         frog_frozen = False
-        frog_speed_x = -2
+        frog_speed_x = -1.5
 
 def change_frog_speed(cycle):
     global frog_speed_y, frog_speed_factor
     if not frog_frozen and cycle == restart_cycle:
-        # Generate a new random vertical speed for the frog (-5 to 5)
-        new_speed_y = random.uniform(-5, 5)
+        # Generate a new random vertical speed for the frog (0.5 to 2)
+        new_speed_y = random.uniform(0.5, 2)
         frog_speed_y = new_speed_y
-    # Schedule the next speed change every 5 seconds
+    # Schedule the next speed change after a random delay
     if cycle == restart_cycle:
-        next_speed_change = 5 * 1000
-        wn.ontimer(lambda: change_frog_speed(cycle), next_speed_change)
+        next_speed_change = random.uniform(3, 10) * 1000
+        wn.ontimer(lambda: change_frog_speed(cycle), int(next_speed_change))
 
 def is_collision(bullet, frog):
     # Define the frog's hitbox dimensions
@@ -327,7 +327,7 @@ def respawn_frog():
     frog.setposition(new_x, new_y)
     frog.showturtle()
     frog_frozen = False
-    frog_speed_x = -2
+    frog_speed_x = -1.5
 
 def play_death_sound():
     global death_sound_playing, laser_sound_playing
