@@ -33,7 +33,7 @@ def move_down_release():
 def fire_bullet():
     global bullet_state
     if bullet_state == "ready" and not death_sound_playing:
-        winsound.PlaySound('audios/laser_sfx.wav', winsound.SND_ASYNC)
+        winsound.PlaySound('audios/laser_sfx.wav', winsound.SND_ASYNC | winsound.SND_NOSTOP)
         x = player.xcor()
         y = player.ycor()
         bullet.setposition(x + 40, y)
@@ -248,22 +248,10 @@ def is_collision(bullet, frog):
     # Define the frog's hitbox dimensions
     frog_width = 50
     frog_height = 50
-    hitbox_offset = 20  # Offset to move the hitbox down by 20 pixels
-    
-    bullet_x = bullet.xcor()
-    bullet_y = bullet.ycor()
-    frog_x = frog.xcor()
-    frog_y = frog.ycor()
-    
-    # Adjust the hitbox to move it 20 pixels down
-    hitbox_top = frog_y - frog_height / 2 - hitbox_offset
-    hitbox_bottom = frog_y + frog_height / 2 - hitbox_offset
-    hitbox_left = frog_x - frog_width / 2
-    hitbox_right = frog_x + frog_width / 2
-    
-    # Check if the bullet is within the adjusted hitbox
-    if (hitbox_left < bullet_x < hitbox_right and
-        hitbox_top < bullet_y < hitbox_bottom):
+
+    # Check if the bullet is within the frog's hitbox
+    if (bullet.xcor() > frog.xcor() - frog_width / 2 and bullet.xcor() < frog.xcor() + frog_width / 2) and \
+       (bullet.ycor() > frog.ycor() - frog_height / 2 and bullet.ycor() < frog.ycor() + frog_height / 2):
         return True
     return False
 
@@ -271,80 +259,53 @@ def is_powerup_collision(bullet, powerup):
     # Define the powerup's hitbox dimensions
     powerup_width = 40
     powerup_height = 40
-    
-    bullet_x = bullet.xcor()
-    bullet_y = bullet.ycor()
-    powerup_x = powerup.xcor()
-    powerup_y = powerup.ycor()
-    
-    # Check if the bullet is within the powerup hitbox
-    if (powerup_x - powerup_width / 2 < bullet_x < powerup_x + powerup_width / 2 and
-        powerup_y - powerup_height / 2 < bullet_y < powerup_y + powerup_height / 2):
+
+    # Check if the bullet is within the powerup's hitbox
+    if (bullet.xcor() > powerup.xcor() - powerup_width / 2 and bullet.xcor() < powerup.xcor() + powerup_width / 2) and \
+       (bullet.ycor() > powerup.ycor() - powerup_height / 2 and bullet.ycor() < powerup.ycor() + powerup_height / 2):
         return True
     return False
-
-def apply_powerup():
-    global player_speed, frog_speed_factor
-    # Randomly choose a powerup effect
-    powerup_effect = random.choice(['speed_boost', 'slow_frog'])
-    if powerup_effect == 'speed_boost':
-        player_speed = 4  # Increase player speed
-        display_message("Powerup!", "Increased Player Speed!")
-    elif powerup_effect == 'slow_frog':
-        frog_speed_factor = 0.5  # Slow down the frog
-        display_message("Powerup!", "Frog Slowed Down!")
-
-    # Set a timer to remove the powerup effect after a duration between 5-10 seconds
-    powerup_duration = random.uniform(5, 10)
-    wn.ontimer(remove_powerup, int(powerup_duration * 1000))
-
-def remove_powerup():
-    global player_speed, frog_speed_factor
-    # Reset the player speed and frog speed factor to default values
-    player_speed = 2
-    frog_speed_factor = 1
-    # Clear the powerup message
-    message_pen.clear()
-
-def respawn_frog():
-    global frog_frozen, frog_speed_x
-    new_x = frog.xcor() + 200
-    if new_x > 300:
-        new_x = 300
-    new_y = random.randint(-220, 220)
-    frog.setposition(new_x, new_y)
-    frog.showturtle()
-    frog_frozen = False
-    frog_speed_x = -1
 
 def play_death_sound():
     global death_sound_playing
     death_sound_playing = True
-    winsound.PlaySound('audios/death_sfx.wav', winsound.SND_ASYNC)
+    winsound.PlaySound('audios/death_sfx.wav', winsound.SND_ASYNC | winsound.SND_NOSTOP)
     wn.ontimer(end_death_sound, 500)  # Adjust the timer to the length of the sound effect
 
 def end_death_sound():
     global death_sound_playing
     death_sound_playing = False
 
-def show_powerup():
+def respawn_frog():
+    global frog_frozen
+    # Move the frog to the right by 200 pixels but not exceeding the boundary
+    new_x = min(frog.xcor() + 200, 300)
+    frog.setx(new_x)
+    frog.showturtle()
+    frog_frozen = False
+
+def apply_powerup():
+    global player_speed, frog_speed_factor, powerup_visible
+    player_speed = 5  # Increase player speed
+    frog_speed_factor = 0.5  # Decrease frog speed
+    powerup_visible = False  # Hide powerup after use
+    wn.ontimer(deactivate_powerup, 5000)  # Powerup lasts for 5 seconds
+
+def deactivate_powerup():
+    global player_speed, frog_speed_factor
+    player_speed = 2  # Reset player speed
+    frog_speed_factor = 1  # Reset frog speed factor
+
+def spawn_powerup():
     global powerup_visible
     if not powerup_visible:
-        x = random.randint(-200, 200)
-        y = random.randint(-200, 200)
-        powerup.setposition(x, y)
+        # Spawn powerup at a random y-coordinate within boundaries
+        powerup.setposition(0, random.randint(-220, 220))
         powerup.showturtle()
         powerup_visible = True
-        # Hide the powerup after a certain duration (e.g., 5 seconds)
-        wn.ontimer(hide_powerup, 5000)
-    # Schedule the next powerup appearance after a random delay between 10-25 seconds
-    next_powerup_delay = random.uniform(10, 25) * 1000
-    wn.ontimer(show_powerup, int(next_powerup_delay))
-
-def hide_powerup():
-    global powerup_visible
-    powerup.hideturtle()
-    powerup_visible = False
+    # Schedule next powerup spawn after random delay between 15-30 seconds
+    next_powerup_spawn = random.uniform(15, 30) * 1000
+    wn.ontimer(spawn_powerup, int(next_powerup_spawn))
 
 def game_loop():
     global bullet_state, score, powerup_visible
@@ -366,7 +327,8 @@ def game_loop():
         # Check for collision with the frog
         if frog.isvisible() and is_collision(bullet, frog):
             # Play death sound without blocking
-            play_death_sound()
+            if not death_sound_playing:
+                play_death_sound()
             # Update the score
             score += 1
             score_pen.clear()
@@ -390,15 +352,14 @@ def game_loop():
     # Repeat the game loop
     wn.ontimer(game_loop, 10)  # Update every 10 milliseconds
 
-# Start the frog movement loop
-move_frog()
-# Start changing the frog's speed at random intervals
-change_frog_speed()
-# Start the first freeze period after a random delay between 5-20 seconds
-next_freeze_delay = random.uniform(5, 20)
-wn.ontimer(freeze_frog, int(next_freeze_delay * 1000))
+# Schedule the initial freeze period
+wn.ontimer(freeze_frog, int(random.uniform(5, 20) * 1000))
+
 # Start the game loop
 game_loop()
-# Schedule the first powerup appearance
-wn.ontimer(show_powerup, int(random.uniform(10, 25) * 1000))
+
+# Start the powerup spawning loop
+wn.ontimer(spawn_powerup, int(random.uniform(15, 30) * 1000))
+
+# Start the turtle graphics loop
 turtle.done()
