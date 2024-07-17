@@ -6,7 +6,7 @@ import winsound
 bullet_state = "ready"  # Initialize bullet state
 up_pressed = False
 down_pressed = False
-frog_speed_x = -1  # Initialize frog_speed to move left
+frog_speed_x = -2  # Initialize frog_speed to move left
 frog_speed_y = 2  # Initialize frog's vertical speed
 frog_frozen = False  # Flag to track if frog is currently frozen
 death_sound_playing = False  # Flag to track if death sound is playing
@@ -15,6 +15,7 @@ powerup_visible = False  # Flag to track if powerup is visible
 player_speed = 2  # Default player speed
 frog_speed_factor = 1  # Speed factor for frog
 game_over = False  # Flag to track if the game is over
+restart_cycle = 0  # Variable to track the current restart cycle
 
 def move_up():
     global up_pressed
@@ -46,7 +47,9 @@ def fire_bullet():
         bullet_state = "fired"
 
 def restart_game():
-    global score, bullet_state, frog_speed_x, frog_speed_y, frog_frozen, powerup_visible, player_speed, frog_speed_factor, game_over
+    global score, bullet_state, frog_speed_x, frog_speed_y, frog_frozen, powerup_visible, player_speed, frog_speed_factor, game_over, restart_cycle
+    # Increment restart cycle
+    restart_cycle += 1
     # Reset the score
     score = 0
     score_pen.clear()
@@ -62,7 +65,7 @@ def restart_game():
     frog.setposition(200, 0)
     frog.showturtle()
     frog_frozen = False
-    frog_speed_x = -1
+    frog_speed_x = -2
     frog_speed_y = 2
     frog_speed_factor = 1
     # Hide powerup
@@ -71,10 +74,10 @@ def restart_game():
     # Clear any game over message
     message_pen.clear()
     # Immediately invoke the frog movement and behaviors
-    move_frog()
-    change_frog_speed()
+    move_frog(restart_cycle)
+    change_frog_speed(restart_cycle)
     # Start the first freeze period after a short delay to ensure the frog moves first
-    wn.ontimer(freeze_frog, int(random.uniform(5, 20) * 1000))
+    wn.ontimer(lambda: freeze_frog(restart_cycle), int(random.uniform(5, 20) * 1000))
     wn.listen()
     # Reset game over flag
     game_over = False
@@ -177,10 +180,10 @@ def move_down_continuous():
         y = -220
     player.sety(y)
 
-def move_frog():
+def move_frog(cycle):
     global frog_speed_x, frog_speed_y, frog_frozen, frog_speed_factor
-    # Move the frog only if it's not frozen
-    if not frog_frozen:
+    # Move the frog only if it's not frozen and cycle matches the current restart cycle
+    if not frog_frozen and cycle == restart_cycle:
         new_x = frog.xcor() + frog_speed_x * frog_speed_factor
         new_y = frog.ycor() + frog_speed_y * frog_speed_factor
         # Check border
@@ -198,7 +201,8 @@ def move_frog():
         frog.setx(new_x)
         frog.sety(new_y)
     # Schedule next movement after a short interval
-    wn.ontimer(move_frog, 10)
+    if cycle == restart_cycle:
+        wn.ontimer(lambda: move_frog(cycle), 10)
 
 message_pen = turtle.Turtle()
 message_pen.speed(0)
@@ -220,35 +224,38 @@ def display_message(message1, message2, show_restart=False):
         message_pen.write('Press R to try again', align='center', font=('Arial', 14, 'normal'))
         game_over = True  # Set game_over to True when the player loses
 
-def freeze_frog():
+def freeze_frog(cycle):
     global frog_frozen, frog_speed_x, frog_speed_y
-    if not frog_frozen:
+    if not frog_frozen and cycle == restart_cycle:
         # Freeze the frog for a random duration between 1-3 seconds
         freeze_duration = random.uniform(1, 3)
         frog_frozen = True
         frog_speed_x = 0
         frog_speed_y = 0
         # Schedule unfreeze after freeze_duration seconds
-        wn.ontimer(unfreeze_frog, int(freeze_duration * 1000))
+        wn.ontimer(lambda: unfreeze_frog(cycle), int(freeze_duration * 1000))
     # Schedule the next freeze period after a random delay between 5-20 seconds
-    next_freeze_delay = random.uniform(5, 20)
-    wn.ontimer(freeze_frog, int(next_freeze_delay * 1000))
+    if cycle == restart_cycle:
+        next_freeze_delay = random.uniform(5, 20)
+        wn.ontimer(lambda: freeze_frog(cycle), int(next_freeze_delay * 1000))
 
-def unfreeze_frog():
+def unfreeze_frog(cycle):
     global frog_frozen, frog_speed_x
-    # Unfreeze the frog
-    frog_frozen = False
-    frog_speed_x = -1
+    # Unfreeze the frog only if the cycle matches the current restart cycle
+    if cycle == restart_cycle:
+        frog_frozen = False
+        frog_speed_x = -2
 
-def change_frog_speed():
+def change_frog_speed(cycle):
     global frog_speed_y, frog_speed_factor
-    if not frog_frozen:
+    if not frog_frozen and cycle == restart_cycle:
         # Generate a new random vertical speed for the frog (0.5 to 1.5)
         new_speed_y = random.uniform(0.5, 1.5) * random.choice([-1, 1])
         frog_speed_y = new_speed_y
     # Schedule the next speed change after a random delay
-    next_speed_change = random.uniform(3, 10) * 1000
-    wn.ontimer(change_frog_speed, int(next_speed_change))
+    if cycle == restart_cycle:
+        next_speed_change = random.uniform(3, 10) * 1000
+        wn.ontimer(lambda: change_frog_speed(cycle), int(next_speed_change))
 
 def is_collision(bullet, frog):
     # Define the frog's hitbox dimensions
@@ -320,7 +327,7 @@ def respawn_frog():
     frog.setposition(new_x, new_y)
     frog.showturtle()
     frog_frozen = False
-    frog_speed_x = -1
+    frog_speed_x = -2
 
 def play_death_sound():
     global death_sound_playing, laser_sound_playing
@@ -397,12 +404,12 @@ def game_loop():
     wn.ontimer(game_loop, 10)  # Update every 10 milliseconds
 
 # Start the frog movement loop
-move_frog()
+move_frog(restart_cycle)
 # Start changing the frog's speed at random intervals
-change_frog_speed()
+change_frog_speed(restart_cycle)
 # Start the first freeze period after a random delay between 5-20 seconds
 next_freeze_delay = random.uniform(5, 20)
-wn.ontimer(freeze_frog, int(next_freeze_delay * 1000))
+wn.ontimer(lambda: freeze_frog(restart_cycle), int(next_freeze_delay * 1000))
 # Start the game loop
 game_loop()
 # Schedule the first powerup appearance
