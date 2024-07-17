@@ -14,6 +14,7 @@ laser_sound_playing = False  # Flag to track if laser sound is playing
 powerup_visible = False  # Flag to track if powerup is visible
 player_speed = 2  # Default player speed
 frog_speed_factor = 1  # Speed factor for frog
+game_over = False  # Flag to track if the game is over
 
 def move_up():
     global up_pressed
@@ -45,7 +46,7 @@ def fire_bullet():
         bullet_state = "fired"
 
 def restart_game():
-    global score, bullet_state, frog_speed_x, frog_speed_y, frog_frozen, powerup_visible, player_speed, frog_speed_factor
+    global score, bullet_state, frog_speed_x, frog_speed_y, frog_frozen, powerup_visible, player_speed, frog_speed_factor, game_over
     # Reset the score
     score = 0
     score_pen.clear()
@@ -75,6 +76,8 @@ def restart_game():
     # Start the first freeze period after a short delay to ensure the frog moves first
     wn.ontimer(freeze_frog, int(random.uniform(5, 20) * 1000))
     wn.listen()
+    # Reset game over flag
+    game_over = False
 
 # Set up window
 wn = turtle.Screen()
@@ -204,6 +207,7 @@ message_pen.up()
 message_pen.hideturtle()
 
 def display_message(message1, message2, show_restart=False):
+    global game_over
     message_pen.clear()
     message_pen.setposition(0, 210)  # Move 10 pixels down from original 220
     message_pen.color('purple')
@@ -214,6 +218,7 @@ def display_message(message1, message2, show_restart=False):
         message_pen.setposition(0, 150)  # Move 10 pixels down from the second message
         message_pen.color('dark green')
         message_pen.write('Press R to try again', align='center', font=('Arial', 14, 'normal'))
+        game_over = True  # Set game_over to True when the player loses
 
 def freeze_frog():
     global frog_frozen, frog_speed_x, frog_speed_y
@@ -330,6 +335,8 @@ def end_death_sound():
 
 def show_powerup():
     global powerup_visible
+    if game_over:
+        return  # Do not spawn powerup if the game is over
     if not powerup_visible:
         x = random.randint(-200, 200)
         y = random.randint(-200, 200)
