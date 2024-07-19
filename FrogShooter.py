@@ -218,17 +218,19 @@ message_pen.hideturtle()
 def display_message(message1, message2, show_restart=False):
     global game_over
     message_pen.clear()
-    message_pen.setposition(0, 210)  # Move 10 pixels down from original 220
-    message_pen.color('#D8BFD8')  # Hexadecimal code for light purple
+    message_pen.setposition(0, 210)
+    message_pen.color('#D8BFD8')
     message_pen.write(message1, align='center', font=('Arial', 16, 'normal'))
-    message_pen.setposition(0, 180)  # Move 10 pixels down from original 190
+    message_pen.setposition(0, 180)
     message_pen.write(message2, align='center', font=('Arial', 16, 'normal'))
     if show_restart:
-        message_pen.setposition(0, 150)  # Move 10 pixels down from the second message
+        message_pen.setposition(0, 150)
         message_pen.color('#65a765')
         message_pen.write('Press R to try again', align='center', font=('Arial', 14, 'normal'))
+        message_pen.setposition(0, 120)
+        message_pen.write('Your Score: %s' % score, align='center', font=('Arial', 14, 'normal'))
         game_over = True  # Set game_over to True when the player loses
-        # Change background image to carrotending.gif and set background color to black
+        # Change background image and set background color to black
         wn.bgpic('images/carrotending.gif')
         wn.bgcolor('black')
         player.hideturtle()  # Hide player when the game is over
