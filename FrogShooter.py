@@ -81,8 +81,9 @@ def restart_game():
     wn.listen()
     # Reset game over flag
     game_over = False
-    # Reset background image
+    # Reset background image and color
     wn.bgpic('images/lake.gif')
+    wn.bgcolor('white')
 
 # Set up window
 wn = turtle.Screen()
@@ -226,8 +227,9 @@ def display_message(message1, message2, show_restart=False):
         message_pen.color('dark green')
         message_pen.write('Press R to try again', align='center', font=('Arial', 14, 'normal'))
         game_over = True  # Set game_over to True when the player loses
-        # Change background image to carrotending.gif
+        # Change background image to carrotending.gif and set background color to black
         wn.bgpic('images/carrotending.gif')
+        wn.bgcolor('black')
 
 def freeze_frog(cycle):
     global frog_frozen, frog_speed_x, frog_speed_y
