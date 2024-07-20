@@ -94,6 +94,7 @@ wn.title("Frog Shooter")
 wn.addshape('images/lake.gif')
 wn.addshape('images/carrotending.gif')
 wn.bgpic('images/lake.gif')
+wn.addshape('images/farmending.gif')
 # Register shapes
 turtle.register_shape('images/frogcloud_img.gif')
 turtle.register_shape('images/watergun_img.gif')
@@ -397,6 +398,9 @@ def game_loop():
             score += 1
             score_pen.clear()
             score_pen.write('Score: %s' % score, align='left', font=('Arial', 14, 'normal'))
+            # Check if score has reached 50
+            if score == 50:
+                wn.bgpic('images/farmending.gif')
             # Reset frog and bullet
             bullet.hideturtle()
             bullet_state = "ready"
