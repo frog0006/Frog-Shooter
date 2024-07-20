@@ -188,8 +188,8 @@ def move_down_continuous():
 
 def move_frog(cycle):
     global frog_speed_x, frog_speed_y, frog_frozen, frog_speed_factor
-    # Move the frog only if it's not frozen and cycle matches the current restart cycle
-    if not frog_frozen and cycle == restart_cycle:
+    # Move the frog only if it's not frozen and cycle matches the current restart cycle and the game is not over
+    if not frog_frozen and cycle == restart_cycle and not game_over:
         new_x = frog.xcor() + frog_speed_x * frog_speed_factor
         new_y = frog.ycor() + frog_speed_y * frog_speed_factor
         # Check border
