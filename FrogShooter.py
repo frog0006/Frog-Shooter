@@ -74,6 +74,8 @@ def restart_game():
     powerup_visible = False
     # Clear any game over message
     message_pen.clear()
+    # Show the farm sign
+    arrow_pen.showturtle()
     # Immediately invoke the frog movement and behaviors
     move_frog(restart_cycle)
     change_frog_speed(restart_cycle)
@@ -411,6 +413,14 @@ def game_loop():
                 wn.bgpic('images/farmending.gif')
                 # Display winning message
                 display_message("You win!", "You successfully defended the farm!")
+                # Remove the farm sign
+                arrow_pen.clear()
+                arrow_pen.hideturtle()
+                # Remove the score display
+                score_pen.clear()
+                # Hide any visible powerup
+                hide_powerup()
+                # Prevent further powerups from spawning
                 game_over = True  # Set game_over to True when the player wins
             # Reset frog and bullet
             bullet.hideturtle()
