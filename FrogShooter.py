@@ -220,7 +220,10 @@ def display_message(message1, message2, show_restart=False):
     global game_over
     message_pen.clear()
     message_pen.setposition(0, 210)
-    message_pen.color('#D8BFD8')
+    if game_over and message1 == "You Lost!":
+        message_pen.color('black')  # Set the losing message color to the current text color
+    else:
+        message_pen.color('purple')  # Set the powerup message color to regular purple
     message_pen.write(message1, align='center', font=('Arial', 16, 'normal'))
     message_pen.setposition(0, 180)
     message_pen.write(message2, align='center', font=('Arial', 16, 'normal'))
@@ -235,7 +238,6 @@ def display_message(message1, message2, show_restart=False):
         wn.bgpic('images/carrotending.gif')
         wn.bgcolor('black')
         player.hideturtle()  # Hide player when the game is over
-
 
 def freeze_frog(cycle):
     global frog_frozen, frog_speed_x, frog_speed_y
@@ -375,7 +377,7 @@ def hide_powerup():
     powerup_visible = False
 
 def game_loop():
-    global bullet_state, score, powerup_visible, laser_sound_playing
+    global bullet_state, score, powerup_visible, laser_sound_playing, game_over
     wn.tracer(0)  # Turn off automatic screen updates
     # Move the player
     if up_pressed:
@@ -398,17 +400,24 @@ def game_loop():
             score += 1
             score_pen.clear()
             score_pen.write('Score: %s' % score, align='left', font=('Arial', 14, 'normal'))
-            # Check if score has reached 50
-            if score == 50:
+            # Check if score has reached 10
+            if score == 10:
+                # Player wins, freeze the frog and hide it
+                frog_frozen = True
+                frog.hideturtle()
+                # Hide the player's gun
+                player.hideturtle()
+                # Change background image
                 wn.bgpic('images/farmending.gif')
+                # Display winning message
+                display_message("You win!", "You successfully defended the farm!")
+                game_over = True  # Set game_over to True when the player wins
             # Reset frog and bullet
             bullet.hideturtle()
             bullet_state = "ready"
             laser_sound_playing = False
-            frog.hideturtle()
-            frog_frozen = True
-            # Move the frog to the right by 200 pixels but not exceeding the boundary
-            respawn_frog()
+            if not game_over:
+                respawn_frog()
         # Check for collision with the powerup
         if powerup_visible and is_powerup_collision(bullet, powerup):
             # Hide the powerup and apply its effect
@@ -417,7 +426,8 @@ def game_loop():
             apply_powerup()
     wn.update()  # Update the screen with all changes
     # Repeat the game loop
-    wn.ontimer(game_loop, 10)  # Update every 10 milliseconds
+    if not game_over:
+        wn.ontimer(game_loop, 10)  # Update every 10 milliseconds
 
 # Start the frog movement loop
 move_frog(restart_cycle)
