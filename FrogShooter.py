@@ -76,6 +76,9 @@ def restart_game():
     powerup_visible = False
     # Clear any game over message
     message_pen.clear()
+    # Draw and hide the farm sign arrow
+    arrow_pen.hideturtle()
+    draw_farm_sign()
     # Show the farm sign
     arrow_pen.showturtle()
     # Immediately invoke the frog movement and behaviors
@@ -123,19 +126,22 @@ arrow_pen = turtle.Turtle()
 arrow_pen.speed(0)
 arrow_pen.color('black')
 arrow_pen.up()
-arrow_pen.setposition(-250, 180)  # Position below the scoreboard, moved 30 pixels to the right
 arrow_pen.hideturtle()
-arrow_pen.write('Farm', align='left', font=('Arial', 14, 'normal'))
-arrow_pen.setposition(-260, 190)
-arrow_pen.setheading(180)  # Point the arrow to the left
-arrow_pen.down()
-arrow_pen.forward(30)
-arrow_pen.left(135)
-arrow_pen.forward(10)
-arrow_pen.backward(10)
-arrow_pen.right(270)
-arrow_pen.forward(10)
-arrow_pen.hideturtle()
+
+def draw_farm_sign():
+    arrow_pen.clear()
+    arrow_pen.setposition(-250, 180)  # Position below the scoreboard, moved 30 pixels to the right
+    arrow_pen.write('Farm', align='left', font=('Arial', 14, 'normal'))
+    arrow_pen.setposition(-260, 190)
+    arrow_pen.setheading(180)  # Point the arrow to the left
+    arrow_pen.down()
+    arrow_pen.forward(30)
+    arrow_pen.left(135)
+    arrow_pen.forward(10)
+    arrow_pen.backward(10)
+    arrow_pen.right(270)
+    arrow_pen.forward(10)
+    arrow_pen.hideturtle()
 
 # Create the player turtle
 player = turtle.Turtle()
