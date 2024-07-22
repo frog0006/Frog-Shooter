@@ -47,7 +47,7 @@ def fire_bullet():
         bullet_state = "fired"
 
 def restart_game():
-    global score, bullet_state, frog_speed_x, frog_speed_y, frog_frozen, powerup_visible, player_speed, frog_speed_factor, game_over, restart_cycle
+    global score, bullet_state, frog_speed_x, frog_speed_y, frog_frozen, powerup_visible, player_speed, frog_speed_factor, game_over, restart_cycle, up_pressed, down_pressed
     # Increment restart cycle
     restart_cycle += 1
     # Reset the score
@@ -59,6 +59,8 @@ def restart_game():
     player.setheading(90)
     player.showturtle()  # Show player when the game restarts
     player_speed = 2
+    up_pressed = False
+    down_pressed = False
     # Reset bullet state
     bullet.hideturtle()
     bullet_state = "ready"
@@ -87,6 +89,8 @@ def restart_game():
     # Reset background image and color
     wn.bgpic('images/lake.gif')
     wn.bgcolor('white')
+    # Restart the game loop
+    game_loop()
 
 # Set up window
 wn = turtle.Screen()
