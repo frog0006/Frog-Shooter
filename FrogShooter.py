@@ -128,11 +128,12 @@ arrow_pen.color('black')
 arrow_pen.up()
 arrow_pen.hideturtle()
 
+# Function to draw the farm sign with an arrow pointing to the left
 def draw_farm_sign():
     arrow_pen.clear()
     arrow_pen.setposition(-250, 180)  # Position below the scoreboard, moved 30 pixels to the right
     arrow_pen.write('Farm', align='left', font=('Arial', 14, 'normal'))
-    arrow_pen.setposition(-260, 190)
+    arrow_pen.setposition(-280, 190)  # Adjust the position to the top left corner
     arrow_pen.setheading(180)  # Point the arrow to the left
     arrow_pen.down()
     arrow_pen.forward(30)
@@ -141,7 +142,14 @@ def draw_farm_sign():
     arrow_pen.backward(10)
     arrow_pen.right(270)
     arrow_pen.forward(10)
-    arrow_pen.hideturtle()
+    arrow_pen.hideturtle()  # Hide the turtle after drawing the arrow
+
+
+# Call the draw_farm_sign() function before showing the farm sign
+draw_farm_sign()
+
+# Show the farm sign
+arrow_pen.showturtle()
 
 # Create the player turtle
 player = turtle.Turtle()
