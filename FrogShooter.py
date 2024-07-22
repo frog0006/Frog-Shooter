@@ -244,6 +244,9 @@ def display_message(message1, message2, show_restart=False):
         wn.bgpic('images/carrotending.gif')
         wn.bgcolor('black')
         player.hideturtle()  # Hide player when the game is over
+        bullet.hideturtle()  # Hide bullet when the game is over
+        powerup.hideturtle()  # Hide powerup when the game is over
+        powerup_visible = False  # Mark powerup as not visible
 
 def freeze_frog(cycle):
     global frog_frozen, frog_speed_x, frog_speed_y
