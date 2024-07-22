@@ -389,10 +389,14 @@ def game_loop():
     global bullet_state, score, powerup_visible, laser_sound_playing, game_over
     wn.tracer(0)  # Turn off automatic screen updates
     # Move the player
-    if up_pressed:
-        move_up_continuous()
-    if down_pressed:
-        move_down_continuous()
+    if wn.bgpic() != 'images/carrotending.gif':
+        if up_pressed:
+            move_up_continuous()
+        if down_pressed:
+            move_down_continuous()
+    else:
+        player.hideturtle()
+
     # Move the bullet
     if bullet_state == "fired":
         bullet.fd(bullet_speed)
