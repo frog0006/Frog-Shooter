@@ -16,17 +16,6 @@ player_speed = 2  # Default player speed
 frog_speed_factor = 1  # Speed factor for frog
 game_over = False  # Flag to track if the game is over
 restart_cycle = 0  # Variable to track the current restart cycle
-game_loop_active = False  # Flag to track if game loop is active
-
-# Create keyboard bindings
-def setup_keybindings():
-    turtle.listen()
-    turtle.onkeypress(move_up, 'Up')
-    turtle.onkeyrelease(move_up_release, 'Up')
-    turtle.onkeypress(move_down, 'Down')
-    turtle.onkeyrelease(move_down_release, 'Down')
-    turtle.onkeypress(fire_bullet, 'space')
-    turtle.onkeypress(restart_game, 'r')
 
 def move_up():
     global up_pressed
@@ -58,7 +47,7 @@ def fire_bullet():
         bullet_state = "fired"
 
 def restart_game():
-    global score, bullet_state, frog_speed_x, frog_speed_y, frog_frozen, powerup_visible, player_speed, frog_speed_factor, game_over, restart_cycle, up_pressed, down_pressed, game_loop_active
+    global score, bullet_state, frog_speed_x, frog_speed_y, frog_frozen, powerup_visible, player_speed, frog_speed_factor, game_over, restart_cycle, up_pressed, down_pressed
     # Cancel all running timers before restarting the game
     wn.ontimer(None, 0)  # This effectively cancels all pending ontimers
 
@@ -109,7 +98,6 @@ def restart_game():
     wn.bgpic('images/lake.gif')
     wn.bgcolor('white')
     # Restart the game loop
-    game_loop_active = False  # Mark game loop as inactive to prevent duplicate loops
     game_loop()
 
 # Set up window
@@ -408,75 +396,71 @@ def hide_powerup():
     powerup_visible = False
 
 def game_loop():
-    global bullet_state, score, powerup_visible, laser_sound_playing, game_over, game_loop_active
-    if not game_loop_active:
-        game_loop_active = True  # Mark the game loop as active to prevent re-entry
+    global bullet_state, score, powerup_visible, laser_sound_playing, game_over
 
-        wn.tracer(0)  # Turn off automatic screen updates
-        # Move the player
-        if wn.bgpic() != 'images/carrotending.gif':
-            if up_pressed:
-                move_up_continuous()
-            if down_pressed:
-                move_down_continuous()
-        else:
-            player.hideturtle()
+    wn.tracer(0)  # Turn off automatic screen updates
+    # Move the player
+    if wn.bgpic() != 'images/carrotending.gif':
+        if up_pressed:
+            move_up_continuous()
+        if down_pressed:
+            move_down_continuous()
+    else:
+        player.hideturtle()
 
-        # Move the bullet
-        if bullet_state == "fired":
-            bullet.fd(bullet_speed)
-            # Check if the bullet goes off screen
-            if bullet.xcor() > 300:
-                bullet.hideturtle()
-                bullet_state = "ready"
-                laser_sound_playing = False
-            # Check for collision with the frog
-            if frog.isvisible() and is_collision(bullet, frog):
-                # Play death sound without blocking
-                play_death_sound()
-                # Update the score
-                score += 1
+    # Move the bullet
+    if bullet_state == "fired":
+        bullet.fd(bullet_speed)
+        # Check if the bullet goes off screen
+        if bullet.xcor() > 300:
+            bullet.hideturtle()
+            bullet_state = "ready"
+            laser_sound_playing = False
+        # Check for collision with the frog
+        if frog.isvisible() and is_collision(bullet, frog):
+            # Play death sound without blocking
+            play_death_sound()
+            # Update the score
+            score += 1
+            score_pen.clear()
+            score_pen.write('Score: %s' % score, align='left', font=('Arial', 14, 'normal'))
+            # Check if score has reached 10
+            if score == 10:
+                # Player wins, freeze the frog and hide it
+                frog_frozen = True
+                frog.hideturtle()
+                # Hide the player's gun
+                player.hideturtle()
+                # Change background image
+                wn.bgpic('images/farmending.gif')
+                # Display winning message
+                display_message("You win!", "You successfully defended the farm!")
+                # Remove the farm sign
+                arrow_pen.clear()
+                arrow_pen.hideturtle()
+                # Remove the score display
                 score_pen.clear()
-                score_pen.write('Score: %s' % score, align='left', font=('Arial', 14, 'normal'))
-                # Check if score has reached 10
-                if score == 10:
-                    # Player wins, freeze the frog and hide it
-                    frog_frozen = True
-                    frog.hideturtle()
-                    # Hide the player's gun
-                    player.hideturtle()
-                    # Change background image
-                    wn.bgpic('images/farmending.gif')
-                    # Display winning message
-                    display_message("You win!", "You successfully defended the farm!")
-                    # Remove the farm sign
-                    arrow_pen.clear()
-                    arrow_pen.hideturtle()
-                    # Remove the score display
-                    score_pen.clear()
-                    # Hide any visible powerup
-                    hide_powerup()
-                    # Prevent further powerups from spawning
-                    game_over = True  # Set game_over to True when the player wins
-                # Reset frog and bullet
-                bullet.hideturtle()
-                bullet_state = "ready"
-                laser_sound_playing = False
-                if not game_over:
-                    respawn_frog()
-            # Check for collision with the powerup
-            if powerup_visible and is_powerup_collision(bullet, powerup):
-                # Hide the powerup and apply its effect
-                powerup.hideturtle()
-                powerup_visible = False
-                apply_powerup()
+                # Hide any visible powerup
+                hide_powerup()
+                # Prevent further powerups from spawning
+                game_over = True  # Set game_over to True when the player wins
+            # Reset frog and bullet
+            bullet.hideturtle()
+            bullet_state = "ready"
+            laser_sound_playing = False
+            if not game_over:
+                respawn_frog()
+        # Check for collision with the powerup
+        if powerup_visible and is_powerup_collision(bullet, powerup):
+            # Hide the powerup and apply its effect
+            powerup.hideturtle()
+            powerup_visible = False
+            apply_powerup()
 
-        wn.update()  # Update the screen with all changes
+    wn.update()  # Update the screen with all changes
 
-        if not game_over:
-            wn.ontimer(game_loop, 10)  # Update every 10 milliseconds
-        else:
-            game_loop_active = False  # Reset loop flag if the game is over
+    if not game_over:
+        wn.ontimer(game_loop, 10)  # Update every 10 milliseconds
 
 # Start the frog movement loop
 move_frog(restart_cycle)
@@ -489,6 +473,15 @@ wn.ontimer(lambda: freeze_frog(restart_cycle), int(next_freeze_delay * 1000))
 game_loop()
 # Schedule the first powerup appearance
 wn.ontimer(show_powerup, int(random.uniform(10, 25) * 1000))
+
+def setup_keybindings():
+    turtle.listen()
+    turtle.onkeypress(move_up, 'Up')
+    turtle.onkeyrelease(move_up_release, 'Up')
+    turtle.onkeypress(move_down, 'Down')
+    turtle.onkeyrelease(move_down_release, 'Down')
+    turtle.onkeypress(fire_bullet, 'space')
+    turtle.onkeypress(restart_game, 'r')
 
 setup_keybindings()  # Setup key bindings
 
