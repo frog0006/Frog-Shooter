@@ -48,9 +48,6 @@ def fire_bullet():
 
 def restart_game():
     global score, bullet_state, frog_speed_x, frog_speed_y, frog_frozen, powerup_visible, player_speed, frog_speed_factor, game_over, restart_cycle, up_pressed, down_pressed
-    # Cancel all running timers before restarting the game
-    wn.ontimer(None, 0)  # This effectively cancels all pending ontimers
-
     # Increment restart cycle
     restart_cycle += 1
     # Reset the score
@@ -91,7 +88,7 @@ def restart_game():
     change_frog_speed(restart_cycle)
     # Start the first freeze period after a short delay to ensure the frog moves first
     wn.ontimer(lambda: freeze_frog(restart_cycle), int(random.uniform(5, 20) * 1000))
-    setup_keybindings()  # Ensure keybindings are re-established
+    wn.listen()
     # Reset game over flag
     game_over = False
     # Reset background image and color
@@ -187,6 +184,15 @@ powerup.shape('images/powerup.gif')
 powerup.up()
 powerup.speed(0)
 powerup.hideturtle()
+
+# Create keyboard bindings
+turtle.listen()
+turtle.onkeypress(move_up, 'Up')
+turtle.onkeyrelease(move_up_release, 'Up')
+turtle.onkeypress(move_down, 'Down')
+turtle.onkeyrelease(move_down_release, 'Down')
+turtle.onkeypress(fire_bullet, 'space')
+turtle.onkeypress(restart_game, 'r')
 
 bullet_speed = 10  # Bullet speed
 
@@ -397,7 +403,6 @@ def hide_powerup():
 
 def game_loop():
     global bullet_state, score, powerup_visible, laser_sound_playing, game_over
-
     wn.tracer(0)  # Turn off automatic screen updates
     # Move the player
     if wn.bgpic() != 'images/carrotending.gif':
@@ -456,9 +461,8 @@ def game_loop():
             powerup.hideturtle()
             powerup_visible = False
             apply_powerup()
-
     wn.update()  # Update the screen with all changes
-
+    # Repeat the game loop
     if not game_over:
         wn.ontimer(game_loop, 10)  # Update every 10 milliseconds
 
@@ -473,16 +477,5 @@ wn.ontimer(lambda: freeze_frog(restart_cycle), int(next_freeze_delay * 1000))
 game_loop()
 # Schedule the first powerup appearance
 wn.ontimer(show_powerup, int(random.uniform(10, 25) * 1000))
-
-def setup_keybindings():
-    turtle.listen()
-    turtle.onkeypress(move_up, 'Up')
-    turtle.onkeyrelease(move_up_release, 'Up')
-    turtle.onkeypress(move_down, 'Down')
-    turtle.onkeyrelease(move_down_release, 'Down')
-    turtle.onkeypress(fire_bullet, 'space')
-    turtle.onkeypress(restart_game, 'r')
-
-setup_keybindings()  # Setup key bindings
 
 turtle.done()
