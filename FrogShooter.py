@@ -58,7 +58,8 @@ def restart_game():
     player.setposition(-220, 0)
     player.setheading(90)
     player.showturtle()  # Show player when the game restarts
-    player_speed = 2
+    player_speed = 2  # Reset player speed to default
+    frog_speed_factor = 1  # Reset frog speed factor to default
     up_pressed = False
     down_pressed = False
     # Reset bullet state
@@ -74,6 +75,7 @@ def restart_game():
     # Hide powerup
     powerup.hideturtle()
     powerup_visible = False
+    remove_powerup()  # Ensure any lingering powerup effects are removed
     # Clear any game over message
     message_pen.clear()
     # Draw and hide the farm sign arrow
@@ -351,8 +353,8 @@ def apply_powerup():
 def remove_powerup():
     global player_speed, frog_speed_factor
     # Reset the player speed and frog speed factor to default values
-    player_speed = 2
-    frog_speed_factor = 1
+    player_speed = 2  # Reset to default player speed
+    frog_speed_factor = 1  # Reset frog speed factor to default
     # Clear the powerup message
     message_pen.clear()
 
