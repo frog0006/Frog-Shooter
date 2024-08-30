@@ -133,19 +133,35 @@ arrow_pen.hideturtle()
 # Function to draw the farm sign with an arrow pointing to the left
 def draw_farm_sign():
     arrow_pen.clear()
+    # Draw the text "Farm"
     arrow_pen.setposition(-250, 180)  # Position below the scoreboard, moved 30 pixels to the right
     arrow_pen.write('Farm', align='left', font=('Arial', 14, 'normal'))
+    
+    # Draw the arrow body (rectangle)
     arrow_pen.setposition(-280, 190)  # Adjust the position to the top left corner
-    arrow_pen.setheading(180)  # Point the arrow to the left
+    arrow_pen.setheading(0)  # Set the direction to right
     arrow_pen.down()
-    arrow_pen.forward(30)
-    arrow_pen.left(135)
-    arrow_pen.forward(10)
-    arrow_pen.backward(10)
-    arrow_pen.right(270)
-    arrow_pen.forward(10)
-    arrow_pen.hideturtle()  # Hide the turtle after drawing the arrow
-
+    arrow_pen.forward(30)  # Draw the rectangle body length
+    arrow_pen.right(90)  # Turn right to draw the width
+    arrow_pen.forward(10)  # Draw the width
+    arrow_pen.right(90)  # Turn right to go back to start of rectangle
+    arrow_pen.forward(30)  # Draw the rectangle body length back
+    arrow_pen.right(90)  # Turn right again
+    arrow_pen.forward(10)  # Finish the width to complete the rectangle
+    
+    # Draw the arrow head (triangle)
+    arrow_pen.right(90)  # Align the direction with the arrow body
+    arrow_pen.forward(30)  # Move to the end of the rectangle
+    arrow_pen.left(150)  # Turn left to start drawing the triangle
+    arrow_pen.forward(15)  # Draw the left side of the triangle
+    arrow_pen.backward(15)  # Move back to the end of the rectangle
+    arrow_pen.right(120)  # Turn right to draw the right side of the triangle
+    arrow_pen.forward(15)  # Draw the right side of the triangle
+    arrow_pen.backward(15)  # Move back to the end of the rectangle
+    
+    # Hide the turtle after drawing the arrow
+    arrow_pen.hideturtle()
+    arrow_pen.up()  # Lift the pen up so it doesn't draw when moving again
 
 # Call the draw_farm_sign() function before showing the farm sign
 draw_farm_sign()
