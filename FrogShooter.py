@@ -133,35 +133,43 @@ arrow_pen.hideturtle()
 # Function to draw the farm sign with an arrow pointing to the left
 def draw_farm_sign():
     arrow_pen.clear()
+    arrow_pen.penup()
+    
+    # Set position for the arrow
+    sign_left = -280
+    sign_top = 190
+    
+    # Draw the arrow
+    arrow_pen.setposition(sign_left - 15, sign_top - 7)  # Start position for arrow
+    arrow_pen.pensize(3)  # Set a thicker line for a bold arrow
+    arrow_pen.pendown()
+    
+    # Draw the arrowhead
+    arrow_pen.setheading(45)  # Point up-right
+    arrow_pen.forward(10)
+    arrow_pen.backward(10)
+    arrow_pen.setheading(-45)  # Point down-right
+    arrow_pen.forward(10)
+    arrow_pen.backward(10)
+    
+    # Draw the arrow shaft
+    arrow_pen.setheading(0)  # Point right
+    arrow_pen.forward(25)  # Arrow shaft
+    
+    arrow_pen.penup()
+    
     # Draw the text "Farm"
-    arrow_pen.setposition(-250, 180)  # Position below the scoreboard, moved 30 pixels to the right
+    arrow_pen.setposition(sign_left + 35, sign_top - 15)  # Position text to the right of the arrow
     arrow_pen.write('Farm', align='left', font=('Arial', 14, 'normal'))
     
-    # Draw the arrow body (rectangle)
-    arrow_pen.setposition(-280, 190)  # Adjust the position to the top left corner
-    arrow_pen.setheading(0)  # Set the direction to right
-    arrow_pen.down()
-    arrow_pen.forward(30)  # Draw the rectangle body length
-    arrow_pen.right(90)  # Turn right to draw the width
-    arrow_pen.forward(10)  # Draw the width
-    arrow_pen.right(90)  # Turn right to go back to start of rectangle
-    arrow_pen.forward(30)  # Draw the rectangle body length back
-    arrow_pen.right(90)  # Turn right again
-    arrow_pen.forward(10)  # Finish the width to complete the rectangle
+    # Ensure no additional drawings or artifacts are left
+    arrow_pen.penup()
     
-    # Draw the arrow head (triangle)
-    arrow_pen.right(90)  # Align the direction with the arrow body
-    arrow_pen.forward(30)  # Move to the end of the rectangle
-    arrow_pen.left(150)  # Turn left to start drawing the triangle
-    arrow_pen.forward(15)  # Draw the left side of the triangle
-    arrow_pen.backward(15)  # Move back to the end of the rectangle
-    arrow_pen.right(120)  # Turn right to draw the right side of the triangle
-    arrow_pen.forward(15)  # Draw the right side of the triangle
-    arrow_pen.backward(15)  # Move back to the end of the rectangle
-    
-    # Hide the turtle after drawing the arrow
+    # Hide the turtle after drawing
     arrow_pen.hideturtle()
-    arrow_pen.up()  # Lift the pen up so it doesn't draw when moving again
+    arrow_pen.up()
+
+
 
 # Call the draw_farm_sign() function before showing the farm sign
 draw_farm_sign()
